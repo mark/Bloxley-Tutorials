@@ -62,7 +62,11 @@ Okay, so now we have a basic idea of the pieces, let's get started.  Our plan of
 
 Let's get started. Start by downloading Bloxley from github here: [Bloxley's page on GitHub](http://github.com/mark/Bloxley), and download the Sokoban graphics we'll use here: **URL**.  If you're an artist, and want to provide better sample graphics, please email me at McPhage@gmail.com.
 
-Next in Flash create a new ActionScript 3 project called Sokoban, and add `$LOCALDATA` and the location of your `bloxley` directory to the classpath.  Then copy the resources from the library provided into your project library.  **SAMPLE IMAGES FOR THESE?**
+Next in Flash create a new ActionScript 3 project called Sokoban, and add `$LOCALDATA` and the location of your `bloxley` directory to the classpath. !(Go to the Publish Settings window)[https://s3.amazonaws.com/bloxley_tutorials/1/PublishSettings.jpg] !(Setting the classpath)[https://s3.amazonaws.com/bloxley_tutorials/1/ActionScriptSettings.jpg]
+
+Then copy the resources from the library provided into your project library.  **SAMPLE IMAGES FOR THESE?**
+
+Also, adjust the size of the .swf file so that it's 650px x 400px. !(Adjusting the flash size)[https://s3.amazonaws.com/bloxley_tutorials/1/AdjustSize.jpg]
 
 Finally, we need a package to contain all our custom code, so in the same directory where you saved your `Sokoban.fla` file, create a new directory called `sokoban`.
 
@@ -70,7 +74,7 @@ Now that the project is set up, let's begin coding.
 
 ### Step 2: Creating the board
 
-So now we need a game controller.  In the sokoban directory, create a new file called `SokobanGame.as`, and insert the following code:
+So now we need a game controller.  In the `sokoban` directory, create a new file called `SokobanGame.as`, and insert the following code:
 
     package sokoban {
         
@@ -88,7 +92,7 @@ So now we need a game controller.  In the sokoban directory, create a new file c
      
     }
 
-That seems simple enough.  Our game controller is a subclass of BXGame, and that requires the flash Stage object (which is the root of all movie clips in a flash program).  Right now that's all we're doing--but that's not doing much.
+That seems simple enough.  Our game controller is a subclass of `BXGame`, and that requires the flash `Stage` object (which is the root of all movie clips in a flash program).  Right now that's all we're doing--but that's not doing much.
 
 Next we need to define a patch controller, which will know how to create and display patches as they are needed.  So in your `sokoban` directory, create a new file called `SokobanPatchController.as` and insert the following code:
 
@@ -114,10 +118,10 @@ This does something a little more interesting--it defines several tiles.  In Box
 Next we need to make sure that the Flash graphics will properly link to the code.  This has 2 parts:
 
 1. In the Linkage Properties panel for the movie clip named "Patch", ensure that the Class is set to `game.Patch`
-  ![Setting the clip class](images/LinkageProperties.jpg)
+  ![Setting the clip class](https://s3.amazonaws.com/bloxley_tutorials/1/LinkageProperties.jpg)
   
 2. In the Patch movie clip itself, make sure that there is a frame called "Floor", a frame called "Wall", and a frame called "Target"
-  ![Setting the frame name to match with the Patch keys](images/FrameName.jpg)
+  ![Setting the frame name to match with the Patch keys](https://s3.amazonaws.com/bloxley_tutorials/1/FrameName.jpg)
 
 Bloxley knows to look for a movie clip with class `game.Patch` when creating movie clips for Patches, and it looks for the frame with the same name as the patch clip.  By setting those up, Bloxley can properly render the Patches.
 
