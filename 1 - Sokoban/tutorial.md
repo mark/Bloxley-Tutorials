@@ -63,12 +63,13 @@ Okay, so now we have a basic idea of the pieces, let's get started.  Our plan of
 Let's get started. Start by downloading Bloxley from github here: [Bloxley's page on GitHub](http://github.com/mark/Bloxley), and download the Sokoban graphics we'll use here: **URL**.  If you're an artist, and want to provide better sample graphics, please email me at McPhage@gmail.com.
 
 Next in Flash create a new ActionScript 3 project called Sokoban, and add `$LOCALDATA` and the location of your `bloxley` directory to the classpath.
-![Go to the Publish Settings window](https://s3.amazonaws.com/bloxley_tutorials/1/PublishSettings.jpg)
-![Setting the classpath](https://s3.amazonaws.com/bloxley_tutorials/1/ActionScriptSettings.jpg)
+  ![Go to the Publish Settings window](https://s3.amazonaws.com/bloxley_tutorials/1/PublishSettings.jpg)
+  ![Setting the classpath](https://s3.amazonaws.com/bloxley_tutorials/1/ActionScriptSettings.jpg)
 
 Then copy the resources from the library provided into your project library.  **SAMPLE IMAGES FOR THESE?**
 
-Also, adjust the size of the .swf file so that it's 650px x 400px. !(Adjusting the flash size)[https://s3.amazonaws.com/bloxley_tutorials/1/AdjustSize.jpg]
+Also, adjust the size of the .swf file so that it's 650px x 400px.
+  ![Adjusting the flash size](https://s3.amazonaws.com/bloxley_tutorials/1/AdjustSize.jpg)
 
 Finally, we need a package to contain all our custom code, so in the same directory where you saved your `Sokoban.fla` file, create a new directory called `sokoban`.
 
