@@ -62,7 +62,7 @@ Okay, so now we have a basic idea of the pieces, let's get started.  Our plan of
 
 Let's get started. Start by downloading Bloxley from github here: [Bloxley's page on GitHub](http://github.com/mark/Bloxley), and download the Sokoban graphics we'll use here: **URL**.  If you're an artist, and want to provide better sample graphics, please email me at McPhage@gmail.com.
 
-Next in Flash create a new ActionScript 3 project called Sokoban, and add your Bloxley directory to the classpath.  Then copy the resources from the library provided into your project library.  **SAMPLE IMAGES FOR THESE?**
+Next in Flash create a new ActionScript 3 project called Sokoban, and add `$LOCALDATA` and the location of your `bloxley` directory to the classpath.  Then copy the resources from the library provided into your project library.  **SAMPLE IMAGES FOR THESE?**
 
 Finally, we need a package to contain all our custom code, so in the same directory where you saved your `Sokoban.fla` file, create a new directory called `sokoban`.
 
@@ -121,5 +121,34 @@ Next we need to make sure that the Flash graphics will properly link to the code
 
 Bloxley knows to look for a movie clip with class `game.Patch` when creating movie clips for Patches, and it looks for the frame with the same name as the patch clip.  By setting those up, Bloxley can properly render the Patches.
 
-So now we need to 
+Now that we've created a controller, we need to tell the Sokoban game about it.  Append the following line to the end of the BXGame constructor:
 
+    controllers({ Patch: SokobanPatchController });
+
+This tells Bloxley that we want a patch controller which is an instance of `SokobanPatchController`.
+
+So now we need to instantiate a Sokoban game, and give it a sample level to render.  Insert the following code into the Frame Actions for `Sokoban.fla`
+
+    import sokoban.*;
+    
+    var game = new SokobanGame(stage);
+    
+    game.loadLevel([
+     "....#####..........",
+     "....#...#..........",
+     "....#&..#..........",
+     "..###..&##.........",
+     "..#..&.&.#.........",
+     "###.#.##.#...######",
+     "#...#.##.#####..$$#",
+     "#.&..&..........$$#",
+     "#####.###.#@##..$$#",
+     "....#.....#########",
+     "....#######........"
+    ]);
+    
+    game.showBank("Main");
+
+This tells Flash that we're creating a new instance of SokobanGame, our top level game controller, and telling that game to load the level we provide.  The level is given as an array of strings--each string represents one row of the level, and each character in the string represents one patch (and possibly some actors).
+
+When you run the Flash file, assuming everything has been entered correctly, you should get something that looks as follows:

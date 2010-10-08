@@ -8,6 +8,8 @@ package sokoban {
         
         public function SokobanGame(stage:Stage) {
             super(stage);
+            
+            controllers({ Patch: SokobanPatchController })
         }
 
     }
