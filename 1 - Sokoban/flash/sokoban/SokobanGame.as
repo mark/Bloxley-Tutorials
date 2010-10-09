@@ -9,7 +9,8 @@ package sokoban {
         public function SokobanGame(stage:Stage) {
             super(stage);
             
-            controllers({ Patch: SokobanPatchController })
+            controllers({ Patch: SokobanPatchController, Worker: SokobanWorkerController, Play: BXPlayController, Block: SokobanBlockController });
+            setCurrentGameController("Play");
         }
 
     }

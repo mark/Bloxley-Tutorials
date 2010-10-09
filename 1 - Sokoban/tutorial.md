@@ -54,13 +54,14 @@ Okay, so now we have a basic idea of the pieces, let's get started.  Our plan of
 
 1. Setting up the project
 2. Get the board to appear.
-3. Get the workers to show up, and move around.
-4. Get the blocks to show up, and get pushed around.
-5. Implementing the winning condition.
+3. Get the workers to show up.
+4. Getting workers to move around.
+5. Get the blocks to show up, and get pushed around.
+6. Implementing the winning condition.
 
 ### Step 1: Setting up the project
 
-Let's get started. Start by downloading Bloxley from github here: [Bloxley's page on GitHub](http://github.com/mark/Bloxley), and download the Sokoban graphics we'll use here: **URL**.  If you're an artist, and want to provide better sample graphics, please email me at McPhage@gmail.com.
+Let's get started. Start by downloading Bloxley from github here: [Bloxley's page on GitHub](http://github.com/mark/Bloxley), and download the Sokoban graphics we'll use here: [Sokoban Graphics](https://s3.amazonaws.com/bloxley_tutorials/1/SokobanGraphics.fla).  If you're an artist, and want to provide better sample graphics, please email me at McPhage@gmail.com.
 
 Next in Flash create a new ActionScript 3 project called Sokoban, and add `$LOCALDATA` and the location of your `bloxley` directory to the classpath.
   ![Go to the Publish Settings window](https://s3.amazonaws.com/bloxley_tutorials/1/PublishSettings.jpg)
@@ -141,17 +142,17 @@ So now we need to instantiate a Sokoban game, and give it a sample level to rend
     var game = new SokobanGame(stage);
     
     game.loadLevel([
-     "....#####..........",
-     "....#...#..........",
-     "....#&..#..........",
-     "..###..&##.........",
-     "..#..&.&.#.........",
-     "###.#.##.#...######",
-     "#...#.##.#####..$$#",
-     "#.&..&..........$$#",
-     "#####.###.#@##..$$#",
-     "....#.....#########",
-     "....#######........"
+      "....#####..........",
+      "....#...#..........",
+      "....#&..#..........",
+      "..###..&##.........",
+      "..#..&.&.#.........",
+      "###.#.##.#...######",
+      "#...#.##.#####..$$#",
+      "#.&..&..........$$#",
+      "#####.###.#@##..$$#",
+      "....#.....#########",
+      "....#######........"
     ]);
     
     game.showBank("Main");
@@ -159,3 +160,136 @@ So now we need to instantiate a Sokoban game, and give it a sample level to rend
 This tells Flash that we're creating a new instance of SokobanGame, our top level game controller, and telling that game to load the level we provide.  The level is given as an array of strings--each string represents one row of the level, and each character in the string represents one patch (and possibly some actors).
 
 When you run the Flash file, assuming everything has been entered correctly, you should get something that looks as follows:
+![The game board with patches](https://s3.amazonaws.com/bloxley_tutorials/1/SokobanWithPatches.jpg)
+
+Excellent!  Our board now shows up.
+
+## Step 3: Workers
+
+Now we want to get workers to show up.  The provided level includes a single worker, although multiple workers are possible.
+
+Like we had to for the patches, we need to define a new controller--but in this case, we're defining a subclass of `BXActorController`.  Create a new file in the `sokoban` directory called `SokobanWorkerController.as` and include the following code:
+
+    package sokoban {
+        
+        import bloxley.controller.game.BXActorController;
+        import bloxley.model.game.BXActor;
+        
+        public class SokobanWorkerController extends BXActorController {
+    
+            public function SokobanWorkerController(name, game) {
+                super(name, game);
+                
+                setBoardString("@");
+            }
+            
+            override public function key(options = null):String {
+                return "Worker";
+            }
+            
+        }
+    
+    }
+
+So what does this code do?  Well, there are three things to notice.
+
+First, we're calling `setBoardString()`.  This function works similar to `tiles()`--it defines what characters on the level will generate a worker.  In this case (as we discussed above), '@' characters will generate workers.
+
+Next, we define the `key():String` method.  This determines what **key** will be used for workers.  It can take a hash of options, but that hash isn't provided when loading actors off of a board.
+
+Now we need to tell the game controller about it; change the relevant line in `SokobanGameController` to:
+
+    controllers({ Patch: SokobanPatchController, Worker: SokobanWorkerController });
+    
+Similar to what we did with the patches, ensure the Linkage Class of the 'Worker' movie clip is set to `game.Worker`.  Now when we run our flash file, we see:
+
+![The game with a worker](https://s3.amazonaws.com/bloxley_tutorials/1/SokobanWithWorker.jpg)
+
+### Step 4: Making Workers Move
+
+So we now have a worker. However, it just sits there, and doesn't do anything.  Now we need to turn it into an actual game.
+
+To make a game out of our code, we need to allow user interaction--that requires a game logic controller.  Bloxley includes `BXPlayController`, which is designed to be the starting point for game play.  Right now it's sufficient for our purposes.  So first, let's tell our game controller about it--change the controllers line in `SokobanGameController` to:
+
+    controllers({ Patch: SokobanPatchController, Worker: SokobanWorkerController, Play: BXPlayController });
+
+Now that we have a game controller, we need to enable it.  After the controller line, insert:
+
+    setCurrentGameController("Play");
+    
+This will enable us to move units around, but we need to tell Bloxley what units can be moved.  So in `SokobanWorkerController`, add the following function:
+
+    override public function canBePlayer(actor:BXActor):Boolean {
+        return true;
+    }
+
+This determines whether an actor can be set as the current player, to be directly controlled by the user.
+
+Now when we run our flash file, we can click on our worker to make him active, and move him around using the arrow keys!  Notice that his movement is fully animated.  If the animation appears choppy, set the frame rate higher than the default 12 fps.
+
+Another neat trick is: if you hit Ctrl-z, then you'll undo your last move.  If you hit Ctrl-Z, you'll restart the board!  Like animation, undo is something that Bloxley gives you for (nearly) free.
+
+However, we have a slight problem.  He can walk straight through walls.  This is really not what we want.
+
+To get around this, we need to tell the patch controller about movement through walls.  When a Worker tries to walk into a patch of type Wall, the function `canWorkerEnterWall()` is called on the patch controller.  This method can be implemented to define what should happen in this case.  Insert the following code into the `SokobanPatchController` class:
+
+    public function canWorkerEnterWall(action, source:BXActor, target:BXPatch) {
+        action.fail();
+    }
+
+In this method, `action` is the worker attempting to walk onto a wall.  By telling Bloxley that that attempt should fail, we prevent workers from walking on the wall.  Re-run the flash file and have the worker move around.  You'll notice that it cannot step onto the wall patches.
+
+### Step 5: Blocks
+
+In this step, we're introducing another type of actor--blocks.  Since the process is similar to what we did for workers, I'll go through the steps quickly:
+
+1. Create a file in the `sokoban` directory called `SokobanBlockController.as` and insert the following code:
+
+        package sokoban {
+        
+          import bloxley.controller.game.*;
+          import bloxley.model.game.*;
+          import bloxley.controller.event.BXMoveAction;
+          
+          public class SokobanBlockController extends BXActorController {
+          
+            public function SokobanBlockController(name, game) {
+                super(name, game);
+                
+                setBoardString("&");
+            }
+            
+            override public function key(options = null):String {
+                return "Block";
+            }
+              
+          }
+        
+        }
+
+2. Make sure that there is a movie clip in the flash library with Linkage Class set to `game.Block`.
+3. Update the `controllers()` line in the `SokobanGameController` to read:
+
+        controllers({ Patch: SokobanPatchController, Worker: SokobanWorkerController, Play: BXPlayController, Block: SokobanBlockController });
+
+Now when you run the flash file, it should look like this:
+
+![Board with Blocks](https://s3.amazonaws.com/bloxley_tutorials/1/SokobanWithBlocks.jpg)
+
+And the next problem presents itself: our worker can't interact with the blocks in any way.  Luckily, this is easy to remedy.  When a worker tries to step onto a block, the method `canBeSteppedOnByWorker()` gets called on the block controller.  By implementing this method, we can tell Bloxley what should happen in this situation.  Insert the following code into `SokobanBlockController`:
+
+    public function canBeSteppedOnByWorker(action, block:BXActor, player:BXActor) {
+      action.causes(new BXMoveAction(block, action.direction()));
+    }
+
+(Observent readers will have noticed the import declaration for BXMoveAction earler in this step).  Now when we re-run the flash file, our worker can move around and push blocks--but only 1 block at a time!  Excellent!
+
+**Explanation of causes**
+
+Once more a problem presents itself.  Our worker can push the blocks too well--the blocks can be pushed right onto the walls!  There's two ways to remedy this situation.  We could define a method named `canBlockEnterWall()` in the `SokobanPatchController`, like we did for the workers.  However, there is an easier way--instead of defining a second method, we can make our existing method more general.  By chaning the name from `canWorkerEnterWall` to `canEnterWall` (leaving out the **key** of the object trying to enter the wall), this method will handle both cases.
+
+Now re-run the flash file.  Play around with it--you'll see that you can move the worker around, and have him push the blocks.  Notice that when you undo an action (Ctrl-z or Ctrl-Z), it properly replaces the blocks as well!  Even if you move everything around, completely resetting the board, one quick tap of Ctrl-Z will completely restart the board to its initial position.
+
+### Step 6: Completing a Level
+
+Now that we can handle playing the game, we need to tell Bloxley how the game is won.

@@ -11,6 +11,10 @@ package sokoban {
             tiles({ Floor: ".@&", Wall: "#", Target: "$" });
         }
 
+    	public function canEnterWall(action, source:BXActor, target:BXPatch) {
+    		action.fail();
+    	}
+
     }
 
 }
