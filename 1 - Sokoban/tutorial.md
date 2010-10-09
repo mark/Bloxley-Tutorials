@@ -237,7 +237,7 @@ To get around this, we need to tell the patch controller about movement through 
         action.fail();
     }
 
-In this method, `action` is the worker attempting to walk onto a wall.  By telling Bloxley that that attempt should fail, we prevent workers from walking on the wall.  Re-run the flash file and have the worker move around.  You'll notice that it cannot step onto the wall patches.
+In this method, `action` is the worker's attempt to walk onto a wall.  By telling Bloxley that that attempt should fail, we prevent workers from walking on walls.  Re-run the flash file and have the worker move around.  You'll notice that it cannot step onto the wall patches.
 
 ### Step 5: Blocks
 
@@ -284,12 +284,12 @@ And the next problem presents itself: our worker can't interact with the blocks 
 
 (Observent readers will have noticed the import declaration for BXMoveAction earler in this step).  Now when we re-run the flash file, our worker can move around and push blocks--but only 1 block at a time!  Excellent!
 
-**Explanation of causes**
+In Bloxley, all changes to the state of the game are handled through actions--subclasses of `BXAction`.  By telling Bloxley one action is _caused_ by another, then they succeed or fail together.  So stepping onto a block causes that block to move in the same direction--in other words, the worker pushes the block.  If that push is impossible (like trying to push onto a wall or another block), then the worker's move fails as well.  We'll get into a lot more depth on actions in the next tutorial.
 
-Once more a problem presents itself.  Our worker can push the blocks too well--the blocks can be pushed right onto the walls!  There's two ways to remedy this situation.  We could define a method named `canBlockEnterWall()` in the `SokobanPatchController`, like we did for the workers.  However, there is an easier way--instead of defining a second method, we can make our existing method more general.  By chaning the name from `canWorkerEnterWall` to `canEnterWall` (leaving out the **key** of the object trying to enter the wall), this method will handle both cases.
+Once more a problem presents itself.  Our worker can push the blocks too well--the blocks can be pushed right onto the walls!  There's two ways to remedy this situation.  We could define a method named `canBlockEnterWall()` in the `SokobanPatchController`, like we did for the workers.  However, there is an easier way--instead of defining a second method, we can make our existing method more general.  By chaning the name from `canWorkerEnterWall` to `canEnterWall` (leaving out the **key** of the object trying to enter the wall), this method will handle _any_ actor trying to step onto a wall.
 
 Now re-run the flash file.  Play around with it--you'll see that you can move the worker around, and have him push the blocks.  Notice that when you undo an action (Ctrl-z or Ctrl-Z), it properly replaces the blocks as well!  Even if you move everything around, completely resetting the board, one quick tap of Ctrl-Z will completely restart the board to its initial position.
 
 ### Step 6: Completing a Level
 
-Now that we can handle playing the game, we need to tell Bloxley how the game is won.
+Now that we can handle playing the game, we need to tell Bloxley how the game is won.  First, look back on the code that's in place.  While we've had a long discussion to get here, we really didn't need to implement very much code--but we got a lot of behavior out of it.
