@@ -8,7 +8,7 @@ package sokoban {
         public function SokobanPatchController(name:String, game:BXGame) {
             super(name, game);
             
-            tiles({ Floor: ".@&", Wall: "#", Target: "$" });
+            tiles({ Floor: " @$", Wall: "#", Target: ".+*" });
         }
 
     	public function canEnterWall(action, source:BXActor, target:BXPatch) {

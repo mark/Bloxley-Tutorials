@@ -8,7 +8,7 @@ package sokoban {
         public function SokobanWorkerController(name, game) {
             super(name, game);
             
-            setBoardString("@");
+            setBoardString("@+");
         }
         
         override public function key(options = null):String {

@@ -110,14 +110,14 @@ Next we need to define a patch controller, which will know how to create and dis
             public function SokobanPatchController(name:String, game:BXGame) {
                 super(name, game);
                 
-                tiles({ Floor: ".@&", Wall: "#", Target: "$" });
+                tiles({ Floor: " @$", Wall: "#", Target: ".+*" });
             }
     
         }
     
     }
 
-This does something a little more interesting--it defines several tiles.  In Boxley, a tile is a way to map the kind of patch (its **key**) to the characters that represent it in a level file.  So this means, when loading a level a '.', a '@', or a '&' will all create a Floor patch.  (The '@' and '&' will represent a floor patch with a worker, and floor patch with a block, respectively).
+This does something a little more interesting--it defines several tiles.  In Boxley, a tile is a way to map the kind of patch (its **key**) to the characters that represent it in a level file.  So this means, when loading a level a ' ', a '@', or a '$' will all create a Floor patch.  (The '@' and '$' will represent a floor patch with a worker, and floor patch with a block, respectively).
 
 Next we need to make sure that the Flash graphics will properly link to the code.  This has 2 parts:
 
@@ -142,17 +142,17 @@ So now we need to instantiate a Sokoban game, and give it a sample level to rend
     var game = new SokobanGame(stage);
     
     game.loadLevel([
-      "....#####..........",
-      "....#...#..........",
-      "....#&..#..........",
-      "..###..&##.........",
-      "..#..&.&.#.........",
-      "###.#.##.#...######",
-      "#...#.##.#####..$$#",
-      "#.&..&..........$$#",
-      "#####.###.#@##..$$#",
-      "....#.....#########",
-      "....#######........"
+      "    #####          ",
+      "    #   #          ",
+      "    #$  #          ",
+      "  ###  $##         ",
+      "  #  $ $ #         ",
+      "### # ## #   ######",
+      "#   # ## #####  ..#",
+      "# $  $          ..#",
+      "##### ### #@##  ..#",
+      "    #     #########",
+      "    #######        "
     ]);
     
     game.showBank("Main");
@@ -180,7 +180,7 @@ Like we had to for the patches, we need to define a new controller--but in this 
             public function SokobanWorkerController(name, game) {
                 super(name, game);
                 
-                setBoardString("@");
+                setBoardString("@+");
             }
             
             override public function key(options = null):String {
@@ -193,7 +193,7 @@ Like we had to for the patches, we need to define a new controller--but in this 
 
 So what does this code do?  Well, there are three things to notice.
 
-First, we're calling `setBoardString()`.  This function works similar to `tiles()`--it defines what characters on the level will generate a worker.  In this case (as we discussed above), '@' characters will generate workers.
+First, we're calling `setBoardString()`.  This function works similar to `tiles()`--it defines what characters on the level will generate a worker.  In this case (as we discussed above), '@' and '+' characters will generate workers.
 
 Next, we define the `key():String` method.  This determines what **key** will be used for workers.  It can take a hash of options, but that hash isn't provided when loading actors off of a board.
 
@@ -256,7 +256,7 @@ In this step, we're introducing another type of actor--blocks.  Since the proces
             public function SokobanBlockController(name, game) {
                 super(name, game);
                 
-                setBoardString("&");
+                setBoardString("$*");
             }
             
             override public function key(options = null):String {
@@ -282,13 +282,13 @@ And the next problem presents itself: our worker can't interact with the blocks 
       action.causes(new BXMoveAction(block, action.direction()));
     }
 
-(Observent readers will have noticed the import declaration for BXMoveAction earler in this step).  Now when we re-run the flash file, our worker can move around and push blocks--but only 1 block at a time!  Excellent!
+Now when we re-run the flash file, our worker can move around and push blocks--but only 1 block at a time!  Excellent!
 
 In Bloxley, all changes to the state of the game are handled through actions--subclasses of `BXAction`.  By telling Bloxley one action is _caused_ by another, then they succeed or fail together.  So stepping onto a block causes that block to move in the same direction--in other words, the worker pushes the block.  If that push is impossible (like trying to push onto a wall or another block), then the worker's move fails as well.  We'll get into a lot more depth on actions in the next tutorial.
 
 Once more a problem presents itself.  Our worker can push the blocks too well--the blocks can be pushed right onto the walls!  There's two ways to remedy this situation.  We could define a method named `canBlockEnterWall()` in the `SokobanPatchController`, like we did for the workers.  However, there is an easier way--instead of defining a second method, we can make our existing method more general.  By chaning the name from `canWorkerEnterWall` to `canEnterWall` (leaving out the **key** of the object trying to enter the wall), this method will handle _any_ actor trying to step onto a wall.
 
-Now re-run the flash file.  Play around with it--you'll see that you can move the worker around, and have him push the blocks.  Notice that when you undo an action (Ctrl-z or Ctrl-Z), it properly replaces the blocks as well!  Even if you move everything around, completely resetting the board, one quick tap of Ctrl-Z will completely restart the board to its initial position.
+Now re-run the flash file.  Play around with it--you'll see that you can move the worker around, and have him push the blocks.  Notice that when you undo an action (Ctrl-z or Ctrl-Z), it properly replaces the blocks as well!  Even if you move everything around, completely changing the board, one quick tap of Ctrl-Z will completely restart the board to its initial position.
 
 ### Step 6: Completing a Level
 
