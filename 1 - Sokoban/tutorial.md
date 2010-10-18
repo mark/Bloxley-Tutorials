@@ -42,7 +42,7 @@ In Bloxey, each actor is an instance of BXActor, but since their behavior can be
 
 ### Controllers
 
-In addition to the actor and patch controllers, you will have to define a game controller, which handles top level information about the game, and possiblly one ore more flow controllers, which handle the game flow logic, and how the user interacts with the game.  The game controller will be a subclass of BXGame, and the interface controllers will be subclasses of BXController.
+In addition to the actor and patch controllers, you will have to define a game controller--which handles top level information about the game, and possibly one or more flow controllers--which handle the game flow logic and how the user interacts with the game.  The game controller will be a subclass of BXGame, and the interface controllers will be subclasses of BXController.
 
 ### Keys
 
@@ -155,7 +155,7 @@ So now we need to instantiate a Sokoban game, and give it a sample level to rend
       "    #######        "
     ]);
     
-    game.showBank("Main");
+    game.setCurrentGameController("Play");
 
 This tells Flash that we're creating a new instance of SokobanGame, our top level game controller, and telling that game to load the level we provide.  The level is given as an array of strings--each string represents one row of the level, and each character in the string represents one patch (and possibly some actors).
 
@@ -164,7 +164,7 @@ When you run the Flash file, assuming everything has been entered correctly, you
 
 Excellent!  Our board now shows up.
 
-## Step 3: Workers
+### Step 3: Workers
 
 Now we want to get workers to show up.  The provided level includes a single worker, although multiple workers are possible.
 
@@ -225,7 +225,7 @@ This will enable us to move units around, but we need to tell Bloxley what units
 
 This determines whether an actor can be set as the current player, to be directly controlled by the user.
 
-Now when we run our flash file, we can click on our worker to make him active, and move him around using the arrow keys!  Notice that his movement is fully animated.  If the animation appears choppy, set the frame rate higher than the default 12 fps.
+Now when we run our flash file, we can click on our worker to make him active, and move him around using the arrow keys!  Notice that his movement is fully animated.  (If the animation appears choppy, set the frame rate higher than the default 12 fps.)
 
 Another neat trick is: if you hit Ctrl-z, then you'll undo your last move.  If you hit Ctrl-Z, you'll restart the board!  Like animation, undo is something that Bloxley gives you for (nearly) free.
 
@@ -276,7 +276,7 @@ Now when you run the flash file, it should look like this:
 
 ![Board with Blocks](https://s3.amazonaws.com/bloxley_tutorials/1/SokobanWithBlocks.jpg)
 
-And the next problem presents itself: our worker can't interact with the blocks in any way.  Luckily, this is easy to remedy.  When a worker tries to step onto a block, the method `canBeSteppedOnByWorker()` gets called on the block controller.  By implementing this method, we can tell Bloxley what should happen in this situation.  Insert the following code into `SokobanBlockController`:
+And by playing around with it, you'll notice the next problem: our worker can't interact with the blocks in any way.  Luckily, this is easy to remedy.  When a worker tries to step onto a block, the method `canBeSteppedOnByWorker()` gets called on the block controller.  By implementing this method, we can tell Bloxley what should happen in this situation.  Insert the following code into `SokobanBlockController`:
 
     public function canBeSteppedOnByWorker(action, block:BXActor, player:BXActor) {
       action.causes(new BXMoveAction(block, action.direction()));
@@ -286,10 +286,86 @@ Now when we re-run the flash file, our worker can move around and push blocks--b
 
 In Bloxley, all changes to the state of the game are handled through actions--subclasses of `BXAction`.  By telling Bloxley one action is _caused_ by another, then they succeed or fail together.  So stepping onto a block causes that block to move in the same direction--in other words, the worker pushes the block.  If that push is impossible (like trying to push onto a wall or another block), then the worker's move fails as well.  We'll get into a lot more depth on actions in the next tutorial.
 
-Once more a problem presents itself.  Our worker can push the blocks too well--the blocks can be pushed right onto the walls!  There's two ways to remedy this situation.  We could define a method named `canBlockEnterWall()` in the `SokobanPatchController`, like we did for the workers.  However, there is an easier way--instead of defining a second method, we can make our existing method more general.  By chaning the name from `canWorkerEnterWall` to `canEnterWall` (leaving out the **key** of the object trying to enter the wall), this method will handle _any_ actor trying to step onto a wall.
+Once more a problem presents itself.  Our worker can push the blocks too well--the blocks can be pushed right onto the walls!  There's two ways to remedy this situation.  We could define a method named `canBlockEnterWall()` in the `SokobanPatchController`, like we did for the workers.  However, there is an easier way--instead of defining a second method, we can make our existing method more general.  By changing the method from `canWorkerEnterWall()` to `canEnterWall()` (leaving out the **key** of the object trying to enter the wall), this method will handle _any_ actor trying to step onto a wall.
 
 Now re-run the flash file.  Play around with it--you'll see that you can move the worker around, and have him push the blocks.  Notice that when you undo an action (Ctrl-z or Ctrl-Z), it properly replaces the blocks as well!  Even if you move everything around, completely changing the board, one quick tap of Ctrl-Z will completely restart the board to its initial position.
 
 ### Step 6: Completing a Level
 
-Now that we can handle playing the game, we need to tell Bloxley how the game is won.  First, look back on the code that's in place.  While we've had a long discussion to get here, we really didn't need to implement very much code--but we got a lot of behavior out of it.
+Now that we can handle playing the game, we need to tell Bloxley how the game is won.  First, look back on the code that's in place.  While we've had a long discussion to get here, we really didn't need to implement very much code--but we got a lot of behavior out of it.  Our last step is: we need bloxley to recognize when we've won.
+
+Luckily for us, this won't really require more work that anything else we've done has, but I have to admit, it does involve a slight bit of cheating.  See, bloxley can handle pretty much any grid-based game, but it's primary focus is games like Sokebon--games that involve player characters moving around the grid and interacting with the patches and actors.  So while the game flow can be changed to handle real-time games like Tetris, and games with no clear player characters like Bejeweled--you get Sokoban-like behavior for free out of the box!
+
+So how does this work?  There's a series of 7 methods that get called on the play controller, to walk the game through the gameplay.  Here's a list:
+
+1. startGame--this gets called when the game begins.
+2. validUserActions--this returns a list of methods that indicate that the player has made a move.
+3. heartbeat--this gets called after the player makes a move.
+4. didBeatLevel--this is used to test whether the player has beat the level.
+5. didLoseLevel--this is used to test whether the player has lost the level.
+6. beatLevel--this get called when the player does beat the level.
+7. lostLevel--this get called when the player does lose the level.
+
+That's a lot of methods!  However, we don't have to implement all of them--most have built-in behavior that will be good enough for us.  So let's get started!
+
+First, since we're going to be defining custom behavior, we need a place to define it.  That means just using an instance of `BXPlayController` isn't good enough anymore--we need our own subclass.  Create a file in the `sokoban` directory called `SokobanPlayController`, and insert the following code:
+
+    package sokoban {
+        
+        import bloxley.controller.game.*;
+        
+        public class SokobanPlayController extends BXPlayController {
+            
+            public function SokobanPlayController(name: String, game:BXGame) {
+                super(name, game);
+            }
+            
+    	    override public function didBeatLevel():Boolean {
+                return board().allActors().ofType("Block").areAllGood();
+        	}
+        	
+        }
+    }
+    
+Yes, we really only did need to implement one of the methods listed above.  Phew!  Let's run through the list and discuss why we skipped them:
+
+1. startGame--the default behavior is to select the first actor that can be a player, which is what we want.
+2. validUserActions--the default behavior is to return just "moveCharacter", which is the only kind of user action that we care about.
+3. heartbeat--by default this does nothing, which is okay.
+4. didBeatLevel--by default this just return false, which is why we needed to override it.
+5. didLoseLevel--this also defaults to returning false.  Since Sokoban can't be "lost", we never need it to return anything else.
+6. beatLevel--this performs a game over animation, which we'll discuss below.  Good enough.
+7. lostLevel--since Sokoban can't be lost, this will never get called.
+
+We also need to tell our game controller about our new class.  So in `SokobanGame.as` replace the call to `controllers()` with:
+
+    controllers({ Patch: SokobanPatchController, Worker: SokobanWorkerController, Play: SokobanPlayController,
+      Block: SokobanBlockController });
+
+Now let's look a little closer at the implementation of the `didBeatLevel()` method.  While how it works is something of a mystery, it should be readable as to what it's doing.  First, it takes the gameboard.  Then it gets all of the actors on the board of type **Block**.  Finally, it checks to see if they're all "good", whatever that is.
+
+What is "good", you ask?  Really, "good" can be anything.  It's just a placeholder that bloxley allows, to make it easier for actors to indicate when the think the level is over.  Well, what does it mean in our game?  Right now, it doesn't mean anything, since we havn't told bloxley anything yet.  So let's talk about what it _should_ mean.
+
+What does it mean to beat a level in Sokoban?  The goal is to get all of the blocks onto target squares.  So we want to implement "good" for a block to mean that it is standing on the goal square.  Since it is part of the game logic, it needs to be placed in a controller; the actor controller `SokobanBlockController` seems like an obvious enough place.  Open up `SokobanBlockController.as` and insert the following method into the class:
+
+    override public function isGood(actor:BXActor):Boolean {
+        return actor.amIStandingOn("Target");
+    }
+
+As you can see, the `isGood()` method takes in a single parameter--the actor in question--and returns true or false.  As we discussed above, a block is "good" if it is on top of a target patch, and `amIStandingOn()` takes care of that.
+
+Well, that was pretty easy.  Sure, it involves a shortcut--but there's a huge list of games that this basic gameflow will cover.
+
+One final thing to discuss--what happens when we win the game?  As I said above, the method `beatLevel()` gets called, which shows a game over animation.  While (as always) this behavior can be overridden, the default animation is to show an image that says we won.
+
+Similar to patches and actors, our animation looks for a movie clip with linkage class `game.BeatLevel`.  Like the others, the images that you copied over from `SokobanGraphics.fla` will have that set for the movie clip named (appropriately enough) "Beat Level".  But when implementing your own games, don't forget this step!
+
+Now run our game.  When you get all of the blocks onto the target squares (remove some of them from the level if you want to speed things up), you should get a banner to appear that looks like this:
+
+**INSERT GAME OVER IMAGE!**
+
+Congrats!  You have now programmed a complete game!  It has animation, unlimited undo, and lets you know when the game has been won.  Not too bad for a day's work.
+
+## What's Next?
+
+While our implementation of Sokoban is playable, it's pretty bare-bones.  The player is a single, static image.  There's no timer, or move counter.  It's hard to tell which worker is selected, and it's hard to tell when a block is on the target square.  In our next tutorial, we'll add all of that. We'll also add a new patch type--Ice--so that we can have sliding block puzzles as well.  I hope you can't wait!

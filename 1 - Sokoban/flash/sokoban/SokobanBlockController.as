@@ -19,7 +19,10 @@ package sokoban {
         public function canBeSteppedOnByWorker(action, block:BXActor, player:BXActor) {
     		action.causes(new BXMoveAction(block, action.direction()));
     	}
-        
+
+        override public function isGood(actor:BXActor):Boolean {
+            return actor.amIStandingOn("Target");
+        }
     }
 
 }
