@@ -1,14 +1,14 @@
 # Bloxley
 
-Bloxley is a game framework designed for creating 2D, grid-based puzzle games like Sokoban, Tetris, and Bejewelled.  By allowing you to describe the game at a high level, you can get more complicated behavior, quicker.  Bloxley is an MVC framework, meaning that the code is broken into three main sections--Model classes describe the state of the game, View classes display the game, and Controller classes handle the game logic.  **More here.**
+Bloxley is a game framework designed for creating 2D, grid-based puzzle games like Sokoban, Tetris, and Bejewelled.  By allowing you to describe the game at a high level, you can get more complicated behavior, more quickly.  Bloxley is an MVC framework, meaning that the code is broken into three main sections--Model classes describe the state of the game, View classes display the game, and Controller classes handle the game logic.
 
-Bloxley is designed to make it so advanced features like undo and animation come free (or mostly free), and make it easier to create level editors, and loading from and saving to XML on servers. Currently, Bloxley is only implemented in ActionScript 3, although an older version exists in ActionScript 2, and hopefully I'll eventually crate an Objective-C port.
+Bloxley is designed to make it so advanced features like undo and animation come free (or mostly free), and make it easier to create level editors, and loading from and saving to XML on servers. Currently, Bloxley is only implemented in ActionScript 3, although an older version exists in ActionScript 2, and hopefully I'll eventually crate an Objective-C port.  Note that parts (like saving and loading) are still being ported.
 
-This tutorial will seem like mostly magic--many of the complexities are hidden inside the framework.  How all of the pieces work, and how to take advantage of them, will be covered in more detail in later tutorials.  Until then, just sit back and relax; it'll all make sense eventually.
+This tutorial will seem like mostly hand-waving--many of the complexities are hidden inside the framework.  How all of the pieces work, and how to take advantage of them, will be covered in more detail in later tutorials.  Until then, just sit back and relax; it'll all make sense eventually.
 
 ## The Game
 
-The game we're implementing for this tutorial is Sokoban, the classic game of pushing around boxes in a warehouse.  For those unfamilar with the game, you can check out our stopping point here: **URL**.  The basic rules are as follows:
+The game we're implementing for this tutorial is Sokoban, the classic game of pushing around boxes in a warehouse.  For those unfamilar with the game, you can check out our stopping point here: [Sokoban](http://s3.amazonaws.com/bloxley_tutorials/1/Sokoban.html).  The basic rules are as follows:
 
 1. You can move workers around a grid, one square at a time.
 2. Only one worker moves at a time.
@@ -67,7 +67,7 @@ Next in Flash create a new ActionScript 3 project called Sokoban, and add `$LOCA
   ![Go to the Publish Settings window](https://s3.amazonaws.com/bloxley_tutorials/1/PublishSettings.jpg)
   ![Setting the classpath](https://s3.amazonaws.com/bloxley_tutorials/1/ActionScriptSettings.jpg)
 
-Then copy the resources from the library provided into your project library.  **SAMPLE IMAGES FOR THESE?**
+Then copy the resources from the library provided into your project library.
 
 Also, adjust the size of the .swf file so that it's 650px x 400px.
   ![Adjusting the flash size](https://s3.amazonaws.com/bloxley_tutorials/1/AdjustSize.jpg)
@@ -227,7 +227,7 @@ This determines whether an actor can be set as the current player, to be directl
 
 Now when we run our flash file, we can click on our worker to make him active, and move him around using the arrow keys!  Notice that his movement is fully animated.  (If the animation appears choppy, set the frame rate higher than the default 12 fps.)
 
-Another neat trick is: if you hit Ctrl-z, then you'll undo your last move.  If you hit Ctrl-Z, you'll restart the board!  Like animation, undo is something that Bloxley gives you for (nearly) free.
+Another neat trick is: if you hit Backspace, then you'll undo your last move.  If you hit Shift+Backspace, you'll restart the board!  Like animation, undo is something that Bloxley gives you for (nearly) free.
 
 However, we have a slight problem.  He can walk straight through walls.  This is really not what we want.
 
@@ -288,7 +288,7 @@ In Bloxley, all changes to the state of the game are handled through actions--su
 
 Once more a problem presents itself.  Our worker can push the blocks too well--the blocks can be pushed right onto the walls!  There's two ways to remedy this situation.  We could define a method named `canBlockEnterWall()` in the `SokobanPatchController`, like we did for the workers.  However, there is an easier way--instead of defining a second method, we can make our existing method more general.  By changing the method from `canWorkerEnterWall()` to `canEnterWall()` (leaving out the **key** of the object trying to enter the wall), this method will handle _any_ actor trying to step onto a wall.
 
-Now re-run the flash file.  Play around with it--you'll see that you can move the worker around, and have him push the blocks.  Notice that when you undo an action (Ctrl-z or Ctrl-Z), it properly replaces the blocks as well!  Even if you move everything around, completely changing the board, one quick tap of Ctrl-Z will completely restart the board to its initial position.
+Now re-run the flash file.  Play around with it--you'll see that you can move the worker around, and have him push the blocks.  Notice that when you undo an action (Backspace or Shift+Backspace), it properly replaces the blocks as well!  Even if you move everything around, completely changing the board, one quick tap of Shift+Backspace will completely restart the board to its initial position.
 
 ### Step 6: Completing a Level
 
@@ -298,13 +298,13 @@ Luckily for us, this won't really require more work that anything else we've don
 
 So how does this work?  There's a series of 7 methods that get called on the play controller, to walk the game through the gameplay.  Here's a list:
 
-1. startGame--this gets called when the game begins.
-2. validUserActions--this returns a list of methods that indicate that the player has made a move.
-3. heartbeat--this gets called after the player makes a move.
-4. didBeatLevel--this is used to test whether the player has beat the level.
-5. didLoseLevel--this is used to test whether the player has lost the level.
-6. beatLevel--this get called when the player does beat the level.
-7. lostLevel--this get called when the player does lose the level.
+1. `startGame()`--this gets called when the game begins.
+2. `validUserActions()`--this returns a list of methods that indicate that the player has made a move.
+3. `heartbeat()`--this gets called after the player makes a move.
+4. `didBeatLevel()`--this is used to test whether the player has beat the level.
+5. `didLoseLevel()`--this is used to test whether the player has lost the level.
+6. `beatLevel()`--this get called when the player does beat the level.
+7. `lostLevel()`--this get called when the player does lose the level.
 
 That's a lot of methods!  However, we don't have to implement all of them--most have built-in behavior that will be good enough for us.  So let's get started!
 
@@ -329,13 +329,13 @@ First, since we're going to be defining custom behavior, we need a place to defi
     
 Yes, we really only did need to implement one of the methods listed above.  Phew!  Let's run through the list and discuss why we skipped them:
 
-1. startGame--the default behavior is to select the first actor that can be a player, which is what we want.
-2. validUserActions--the default behavior is to return just "moveCharacter", which is the only kind of user action that we care about.
-3. heartbeat--by default this does nothing, which is okay.
-4. didBeatLevel--by default this just return false, which is why we needed to override it.
-5. didLoseLevel--this also defaults to returning false.  Since Sokoban can't be "lost", we never need it to return anything else.
-6. beatLevel--this performs a game over animation, which we'll discuss below.  Good enough.
-7. lostLevel--since Sokoban can't be lost, this will never get called.
+1. `startGame()`--the default behavior is to select the first actor that can be a player, which is what we want.
+2. `validUserActions()`--the default behavior is to return just "moveCharacter", which is the only kind of user action that we care about.
+3. `heartbeat()`--by default this does nothing, which is okay.
+4. `didBeatLevel()`--by default this just return false, which is why we needed to override it.
+5. `didLoseLevel()`--this also defaults to returning false.  Since Sokoban can't be "lost", we never need it to return anything else.
+6. `beatLevel()`--this performs a game over animation, which we'll discuss below.  Good enough.
+7. `lostLevel()`--since Sokoban can't be lost, this will never get called.
 
 We also need to tell our game controller about our new class.  So in `SokobanGame.as` replace the call to `controllers()` with:
 
@@ -362,7 +362,7 @@ Similar to patches and actors, our animation looks for a movie clip with linkage
 
 Now run our game.  When you get all of the blocks onto the target squares (remove some of them from the level if you want to speed things up), you should get a banner to appear that looks like this:
 
-**INSERT GAME OVER IMAGE!**
+![You beat the level!](http://s3.amazonaws.com/bloxley_tutorials/1/BeatLevel.jpg)
 
 Congrats!  You have now programmed a complete game!  It has animation, unlimited undo, and lets you know when the game has been won.  Not too bad for a day's work.
 
