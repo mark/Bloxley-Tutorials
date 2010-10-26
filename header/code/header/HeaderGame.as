@@ -7,11 +7,13 @@ package header {
     public class HeaderGame extends BXGame {
 
         static var ColorSchemes = [
-            { Patch: 0x9c9965, Block: [ 0xffe3a6, 0xd4c37b, 0x697055, 0x45473f ] },
-            { Patch: 0xa7db9e, Block: [ 0xa1172d, 0xfdffba, 0x275c57, 0x1f1b19 ] },
-            { Patch: 0x4c7f5e, Block: [ 0x4c998c, 0x526647, 0x4c4c3d, 0x33322e ] },
-            { Patch: 0x546f76, Block: [ 0x213155, 0x95bf9b, 0xf2dc9b, 0xd8785f ] },
-            { Patch: 0xc4f2ff, Block: [ 0xfc5b00, 0xffcc00, 0x51c1ff, 0x0078bd ] }
+            { Patch: 0xfdffba, Block: [ 0xa1172d, 0xa7db9e, 0x275c57, 0x1f1b19 ] },
+            { Patch: 0xf2dc9b, Block: [ 0x213155, 0x95bf9b, 0x546f76, 0xd8785f ] },
+            { Patch: 0xc4f2ff, Block: [ 0xfc5b00, 0xffcc00, 0x51c1ff, 0x0078bd ] },
+            { Patch: 0xfeffb7, Block: [ 0xa4152a, 0xa6dc9c, 0x225c57, 0x1e1a18 ] },
+            { Patch: 0xfff2ab, Block: [ 0x1f0055, 0x290217, 0x505210, 0xffd46b ] },
+            { Patch: 0xedb393, Block: [ 0x939eb7, 0x313b54, 0x805060, 0xee796f ] },
+            { Patch: 0xbbb3df, Block: [ 0x572778, 0x75585b, 0x8d7e5c, 0xa59990 ] },
         ]
         
         static var CurrentColorScheme:Object;

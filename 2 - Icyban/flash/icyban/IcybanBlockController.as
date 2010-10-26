@@ -23,6 +23,7 @@ package icyban {
         override public function isGood(actor:BXActor):Boolean {
             return actor.amIStandingOn("Target");
         }
+        
     }
 
 }
