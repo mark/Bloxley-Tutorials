@@ -17,11 +17,12 @@ package tilox {
             pen1.setName("GameOver");
             
         }
+
+        override public function didBeatLevel():Boolean {
+            return board().allActors().ofType("Player").howMany() == board().allPatches().ofType("Floor").howMany();
+        }        
         
         override public function didLoseLevel():Boolean {
-            trace(board().allActors().ofType("Player").howMany());
-            trace(board().allActors().ofType("Player").thatAre( function(actor) { return actor.isActive(); }).howMany());
-
             return board().allActors().ofType("Player").areAnyDisabled();
         }
         
