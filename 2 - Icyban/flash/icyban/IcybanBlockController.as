@@ -20,6 +20,10 @@ package icyban {
     		action.causes(new BXMoveAction(block, action.direction()));
     	}
 
+        override public function defaultSpeed():Number {
+            return 5.0;
+        }
+        
         override public function isGood(actor:BXActor):Boolean {
             return actor.amIStandingOn("Target");
         }

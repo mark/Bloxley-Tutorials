@@ -1,20 +1,20 @@
-package icyban {
+package tilox {
     
     import bloxley.model.game.BXActor;
     import bloxley.controller.game.BXActorController;
     import bloxley.controller.event.BXMoveAction;
     import bloxley.view.sprite.*;
     
-    public class IcybanWorkerController extends BXActorController {
+    public class TiloxPlayerController extends BXActorController {
 
-        public function IcybanWorkerController(name, game) {
+        public function TiloxPlayerController(name, game) {
             super(name, game);
             
             setBoardString("@+!");
         }
         
         override public function key(options = null):String {
-            return "Worker";
+            return "Player";
         }
         
         override public function canBePlayer(actor:BXActor):Boolean {
@@ -44,7 +44,7 @@ package icyban {
             ];
             
             if (action.oldPosition.isntA("Ice")) {
-                anims.push( body.shift([0, -8], { seconds: 1.0 / defaultSpeed(), blend: "bounce" }) );
+                anims.push( body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }) );
             }
 
             return anims;
