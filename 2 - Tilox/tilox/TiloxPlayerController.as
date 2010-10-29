@@ -2,7 +2,7 @@ package tilox {
     
     import bloxley.model.game.BXActor;
     import bloxley.controller.game.BXActorController;
-    import bloxley.controller.event.BXMoveAction;
+    import bloxley.controller.event.*;
     import bloxley.view.sprite.*;
     
     public class TiloxPlayerController extends BXActorController {
@@ -19,6 +19,10 @@ package tilox {
         
         override public function canBePlayer(actor:BXActor):Boolean {
             return true;
+        }
+        
+        override public function frameName(actor:BXActor):String {
+            return "Sleeping";
         }
         
         override public function initializeSprite(actor:BXActor, sprite:BXSprite) {
@@ -47,6 +51,38 @@ package tilox {
                 anims.push( body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }) );
             }
 
+            return anims;
+        }
+        
+        override public function animateSelect(actor:BXActor, oldActor:BXActor, action:BXSelectAction) {
+            var sprite = spriteForActor(actor);
+            var body = sprite.layer(1);
+            
+            var anims = [ body.frame("South", { wait: true }) ];
+            
+            if (oldActor) {
+                var sprite2 = spriteForActor(oldActor);
+                var body2 = sprite2.layer(1);
+            
+                anims.push(body2.frame("Sleeping", { wait: true }));
+            }
+            
+            return anims;
+        }
+
+        override public function animateUndoSelect(actor:BXActor, oldActor:BXActor, action:BXSelectAction) {
+            var sprite = spriteForActor(actor);
+            var body = sprite.layer(1);
+            
+            var anims = [ body.frame("Sleeping", { wait: true }) ];
+            
+            if (oldActor) {
+                var sprite2 = spriteForActor(oldActor);
+                var body2 = sprite2.layer(1);
+
+                anims.push(body2.frame("South", { wait: true }));
+            }
+            
             return anims;
         }
         

@@ -1,10 +1,10 @@
 package tilox {
 
     import bloxley.controller.game.BXPlayController;
-    import bloxley.controller.pen.BXPen;
+    import bloxley.controller.pen.BXPlayPen;
     import bloxley.model.data.BXDirection;
     
-    public class TiloxPlayPen extends BXPen {
+    public class TiloxPlayPen extends BXPlayPen {
     
         public function TiloxPlayPen(controller:BXPlayController) {
             super(controller);

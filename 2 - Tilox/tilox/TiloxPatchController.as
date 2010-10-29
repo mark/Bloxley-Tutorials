@@ -4,6 +4,7 @@ package tilox {
     import bloxley.controller.game.*;
     import bloxley.controller.event.*;
     import bloxley.view.sprite.*;
+    import bloxley.view.animation.BXFreeAnimation;
     
     public class TiloxPatchController extends BXPatchController {
         
@@ -12,15 +13,13 @@ package tilox {
             
             tiles({ Floor: ".@", Pit: "#" });
         }
-
-    	function frameName(patch:BXPatch):String { return null; }
     	
     	override public function initializeSprite(patch:BXPatch, sprite:BXSprite) {
     	    if (patch.isA("Floor")) {
     	        var comp:BXCompositeSprite = sprite as BXCompositeSprite;
     	        
     	        var floor = comp.addSpriteLayer("WeakFloor", { depth: 1, centered: true });
-    	        floor.goto([ 16, 16 ]);
+    	        floor.goto([ 16.0, 16.0 ]);
     	    }
     	}
     	
@@ -35,12 +34,21 @@ package tilox {
     	override public function animatePatchChange(patch:BXPatch, action:BXPatchChangeAction) {
             var layer = (spriteForPatch(patch) as BXCompositeSprite).layer(1);
             
-            return [
+            return new BXFreeAnimation(
                 layer.hide({ seconds: 0.5, blend: "snap" }),
                 layer.resize([0.0, 0.0], { seconds: 0.5, blend: "accel" })
+            );
+        }
+
+        public function animateUndoPatchChange(patch:BXPatch, action:BXPatchChangeAction) {
+            var layer = (spriteForPatch(patch) as BXCompositeSprite).layer(1);
+            
+            return [
+                layer.show(),
+                layer.resize([28.0, 28.0])
             ];
         }
-        
+    	
     }
 
 }
