@@ -74,13 +74,13 @@ package tilox {
             var sprite = spriteForActor(actor);
             var body = sprite.layer(1);
             
-            var anims = [ body.frame("Sleeping", { wait: true }) ];
+            var anims = [ body.frame("Sleeping") ];
             
             if (oldActor) {
                 var sprite2 = spriteForActor(oldActor);
                 var body2 = sprite2.layer(1);
 
-                anims.push(body2.frame("South", { wait: true }));
+                anims.push(body2.frame("South"));
             }
             
             return anims;

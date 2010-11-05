@@ -31,14 +31,14 @@ package tilox {
     	    action.causes( new BXDisableAction(source) );
     	}
     	
-    	override public function animatePatchChange(patch:BXPatch, action:BXPatchChangeAction) {
-            var layer = (spriteForPatch(patch) as BXCompositeSprite).layer(1);
-            
-            return new BXFreeAnimation(
-                layer.hide({ seconds: 0.5, blend: "snap" }),
-                layer.resize([0.0, 0.0], { seconds: 0.5, blend: "accel" })
-            );
-        }
+    	// override public function animatePatchChange(patch:BXPatch, action:BXPatchChangeAction) {
+        //     var layer = (spriteForPatch(patch) as BXCompositeSprite).layer(1);
+        //     
+        //     return [
+        //         layer.hide({ seconds: 0.5, blend: "snap" }),
+        //         layer.resize([0.0, 0.0], { seconds: 0.5, blend: "accel" })
+        //     ];
+        // }
 
         public function animateUndoPatchChange(patch:BXPatch, action:BXPatchChangeAction) {
             var layer = (spriteForPatch(patch) as BXCompositeSprite).layer(1);
