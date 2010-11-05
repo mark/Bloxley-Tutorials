@@ -161,14 +161,14 @@ So in this step, there's really four things we need to implement.
 
 Let's start with breaking floor tiles.  As you can see in `TiloxPatchController.as`, we defined two kinds of patches--_floors_, which players can stand on, and _pits_, which players can't.  So we want to change the code so that when a player exists a floor, it becomes a pit.
 
-Luckily, there's an event for that.  Similar to the `enter` event we used in Sokoban, there's an `exit` event that gets called when an actor exits a patch.  Specifically, if an actor with key **`ActorKey`** exits a patch with key **`PatchKey`**, the first method in the following list that is defined gets called on the patch controller:
+Luckily, there's an event for that.  Similar to the `enter` event we used in Sokoban, there's an `exit` event that gets called when an actor exits a patch.  Specifically, if an actor with key **`ActorKey`** exits a patch with key **`PatchKey`**, the first method in the following list _that is defined_ gets called on the patch controller:
 
 1. `can<ActorKey>Exit<PatchKey>()`
 2. `canExit<PatchKey>()`
 3. `can<ActorKey>Exit()`
 4. `canExit()` -- this method is defined in the base class `BXPatchController`, so if it gets to this level, this method is always called (and does nothing).
 
-This technique--called _Method Cascading_--allows us to define generic methods for common behavior, and override that with custom behavior defined in specific methods.  Bloxley frequently uses it to allow flexibility in customizing behavior.  In Sokoban, we used it to take a method that prevented workers from stepping on walls (`canWorkerEnterWall()`), and made it more generic (by changing the name to `canEnterWall()`), so that blocks couldn't be pushed onto walls, either.
+This technique--called _Method Cascading_--allows us to define generic methods for common behavior, and override that with custom behavior defined in specific methods.  Bloxley frequently uses it to allow flexibility in customizing behavior.  In Sokoban, we used it to take `canWorkerEnterWall()`, a method that prevented workers from stepping on walls, and made it more generic by changing the name to `canEnterWall()`, so that blocks couldn't be pushed onto walls, either.
 
 In Tilox's case, we don't really need to worry about the actor key, since we have only one kind of actor.  So simply defining `canExitFloor()` will allow us to define the behavior we want.  Like with the `enter` actions, these event methods will all be given three arguments: the action that caused the event, the source actor, and the target patch.  So inside the `TiloxPatchController` class, define the following method:
 
@@ -176,9 +176,9 @@ In Tilox's case, we don't really need to worry about the actor key, since we hav
         action.causes( new BXPatchChangeAction(target, "Pit") );
     }
 
-If you re-run the code now, you'll see that when the player steps off of a floor, it disappears.  Not very exciting, but we can change that later.  Nothing happens when the player steps off of a pit, which it shouldn't.  So far, so good.
+`BXPatchChange`, not too surprisingly, is an action that changes a patch from one type to another.  If you re-run the code now, you'll see that when the player steps off of a floor, it disappears.  Not very exciting, but we can change that later.  Nothing happens when the player steps off of a pit, which it shouldn't yet.  So far, so good.
 
-Now we want to handle jumping.  When you hit one of the arrow keys, the player moves one step in whatever direction was hit.  What we'd like is that, when you hold down Shift and hit an arrow key, the player jumps two steps in that direction.  To implement that, we first need to look into what happens when you hit the arrow key.
+Next we want to handle jumping.  When you hit one of the arrow keys, the player moves one step in whatever direction was hit.  What we'd like is that, when you hold down Shift and hit an arrow key, the player jumps two steps in that direction.  To implement that, we first need to look into what happens when you hit the arrow key.
 
 ### Pens
 
@@ -186,7 +186,7 @@ In any Bloxley game, we have on one hand the **User** who is playing the game, a
 
 ![Pen Diagram]()
 
-Bloxley calls this intermediary a _Pen_.  Pens take in user interactions like key presses, and tell the controller what that key press means.  All pens are a subclass of `BXPen`, although there's a special subclass called `BXPlayPen` designed for pens used in gameplay.  The only behavior that `BXPen` directly implements is Delete for undo, and Shift+Delete for resetting the level.  `BXPlayPen`, however, also includes using the arrow keys to move the currently selected actor, and Space to change the currently selected actor.
+Bloxley calls this intermediary a _Pen_.  Pens take in user interactions like key presses, and tell the controller what that key press means.  All pens are a subclass of `BXPen`, although there's a special subclass called `BXPlayPen` designed for pens used in gameplay.  The only behavior that `BXPen` directly implements is Delete for undo, and Shift+Delete for resetting the level.  `BXPlayPen`, however, also includes using the arrow keys to move the currently selected actor, Space to change the currently selected actor, and some mouse control as well.
 
 In Tilox, we want to change what the arrow keys do.  So we'll create our own special subclass of `BXPlayPen`, called `TiloxPlayPen`.  Create the file `tilox/TiloxPlayPen.as` and insert the following code:
 
