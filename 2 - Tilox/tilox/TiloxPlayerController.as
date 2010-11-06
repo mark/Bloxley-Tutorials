@@ -27,10 +27,6 @@ package tilox {
         *                                       *
         ****************************************/
         
-        override public function frameName(actor:BXActor):String {
-            return "Sleeping";
-        }
-        
         override public function initializeSprite(actor:BXActor, sprite:BXSprite) {
             var comp:BXCompositeSprite = sprite as BXCompositeSprite;
             
@@ -39,40 +35,8 @@ package tilox {
             comp.addSpriteLayer("Shadow", { depth: 1 });
             comp.swapLayers(0, 1);
         }
-        
-        override public function animateSelect(actor:BXActor, oldActor:BXActor, action:BXSelectAction) {
-            var sprite = spriteForActor(actor);
-            var body = sprite.layer(1);
-            
-            var anims = [ body.frame("South", { wait: true }) ];
-            
-            if (oldActor) {
-                var sprite2 = spriteForActor(oldActor);
-                var body2 = sprite2.layer(1);
-            
-                anims.push(body2.frame("Sleeping", { wait: true }));
-            }
-            
-            return anims;
-        }
 
-        override public function animateUndoSelect(actor:BXActor, oldActor:BXActor, action:BXSelectAction) {
-            var sprite = spriteForActor(actor);
-            var body = sprite.layer(1);
-            
-            var anims = [ body.frame("Sleeping") ];
-            
-            if (oldActor) {
-                var sprite2 = spriteForActor(oldActor);
-                var body2 = sprite2.layer(1);
-
-                anims.push(body2.frame("South"));
-            }
-            
-            return anims;
-        }
         
-        /*
         override public function defaultSpeed():Number {
             return 5.0;
         }
@@ -81,19 +45,13 @@ package tilox {
             var sprite = spriteForActor(actor);
             var body = sprite.layer(1);
             
-            var anims = [
+            return [
                 sprite.goto(action.newPosition, { speed: defaultSpeed() }),
+                body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }),
                 body.frame(action.direction().toString(), { wait: true })
             ];
-            
-            if (action.oldPosition.isntA("Ice")) {
-                anims.push( body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }) );
-            }
-
-            return anims;
         }
         
-        */
     }
 
 }

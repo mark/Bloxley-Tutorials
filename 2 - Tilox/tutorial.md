@@ -6,7 +6,7 @@ Since our focus is on improving the animations, we're going to implement a prett
 
 In Tilox, you have player characters that can either (a) move from one square to an adjacent square, or (b) jump over an adjacent square to land on the next square over.  When a character leaves a square, that square disappears.  When there's only one square left, you win--but if you jump off into nothingness, you lose.
 
-You can see our implementation below.  The arrow keys will move the character, and holding down Shift while hitting the arrow keys will cause the character to jump.  Like with Sokoban, Delete will undo and Shift+Delete will reset the board.  Also, Space will switch between characters; none of the original levels include that feature, but it's pretty easy to do with Bloxley, so we'll include it a bit later.
+You can see our implementation below.  The arrow keys will move the character, and holding down Shift while hitting the arrow keys will cause the character to jump.  Like with Sokoban, Delete will undo and Shift+Delete will reset the board.
 
 <object width="256" height="256">
   <param name="movie" value="flash/tilox.swf"></param>
@@ -146,7 +146,7 @@ And that should be enough to get us started.  If you run the flash file, you sho
 
 If it doesn't, then run through the steps again, making sure you didn't miss anything.  Setting the classpath for both the actionscript code, and the `bloxley` library, is especially important, and easy to forget.
 
-When runnning the game, you'll notice that it's similar to Sokoban before we implemented any behavior.  You can move the player around, and he'll animate his movements, but it will treat all patches the same.
+When running the game, you'll notice that it's similar to Sokoban before we implemented any behavior.  You can move the player around, and he'll animate his movements, but it will treat all patches the same.
 
 But it's a start.
 
@@ -211,7 +211,7 @@ In Tilox, we want to change what the arrow keys do.  So we'll create our own spe
 
 As you can see, there's a method called `arrow()` which gets called when an arrow key is hit, and the direction of the arrow key is passed in, as well as the state of the modifier keys (Shift, Alt, and Control).
 
-What we're doing when the arrow key gets hit is calling telling the controller to handle a `moveCharacter()` method.  Rather than calling it directly, we're using the indirect "respondTo" method, because that (a) allows hooks around when `moveCharacter()` gets called, and (b) allows the controller to easily pass the call onto another object, in case the controller doesn't handle `moveCharacter()` directly.  In this csae it does, but we should always have the pens speak to the controller through `respondTo()`.
+What we're doing when the arrow key gets hit is calling telling the controller to handle a `moveCharacter()` method.  Rather than calling it directly, we're using the indirect "respondTo" method, because that (a) allows hooks around when `moveCharacter()` gets called, and (b) allows the controller to easily pass the call onto another object, in case the controller doesn't handle `moveCharacter()` directly.  In this case it does, but we should always have the pens speak to the controller through `respondTo()`.
 
 The second argument to `respondTo()` is the array of parameters, so when `moveCharacter()` gets called, the direction and the number of steps will get passed in (2 if shift is being held down, 1 otherwise).  `moveCharacter()` knows how to handle both of those arguments, so we don't need to redefine it--but we do need to tell the play controller about our new pen.
 
@@ -239,23 +239,23 @@ So, open up `tilox/TiloxPatchController.as`, and insert the following method int
 
 This is pretty easy to understand--it gets called when an actor enters a **Pit** patch, and causes the actor to become disabled.  If you run the flash app, and jump off into nothingness, you'll see the actor fade away.  Now we just need to hook that into ending the game.
 
-As we discussed in the last tutorial, Bloxley's default game flow includes a pair of methods `didBeatLevel()` and `didLoseLevel()` where you can determine if the level was beaten or not.  Bloxley checks to see if a level was lost, before it checks whether a level was beaten--so if both conditions are reached at the same time, the level will be lost.  I'm mentioning this because it's relevant for Tilox.
+As we discussed in the last tutorial, Bloxley's default game flow includes a pair of methods `didBeatLevel()` and `didLoseLevel()` where you can determine if the level was beaten or not.  Bloxley checks to see if a level was lost, before it checks whether a level was beaten--so if both conditions are reached at the same time, the level will be lost.  (I'm mentioning this because it's relevant for Tilox.)
 
-So, first: winning.  In standard Tilox, you win when the final square left is the one that the player is standing on.  To handle the case where there are multiple players, we'll just check that the number of Floor patches is the same as the number of Player actors.  In the `TiloxPlayController` class, insert the following method:
+So, first: winning.  In standard Tilox, you win when there is only one floor patch left--the patch you're standing on.  In the `TiloxPlayController` class, insert the following method:
 
     override public function didBeatLevel():Boolean {
-        return board().allActors().ofType("Player").howMany() == board().allPatches().ofType("Floor").howMany();
+        return board().allPatches().ofType("Floor").areExactly(1);
     }        
 
-The method there is I think pretty readable.  One one hand, it takes the board, looks at all of the actors, narrows that down to only actors that are **Player**s, and finds out how many of them there are.  Since we have only one kind of actor, the call to `ofType("Player")` is somewhat redundant, but it makes the method more explicit, and symmetric to the patch case.  On the other hand, it takes the board, looks at all of the patches, gets only the patches that are **Floor**s, and looks at how many of those there are.  If those are the same, then the level has been beaten.
+The method there is I think pretty readable.  It takes the board, looks at all of the patches, gets only the patches that are **Floor**s, and looks at how many of those there are.  If there is exactly 1, then the level has been beaten.
 
-Next, losing.  The user loses a game of Tilox if the player jumps into a pit.  Extending that to multiple players could mean (a) any player jumps into a pit, or (b) all players jump into a pit.  I chose the former, but it doesn't matter too much.  In the `TiloxPlayController` class, insert the method:
+Next, losing.  The user loses a game of Tilox if the player jumps into a pit.  In the `TiloxPlayController` class, insert the method:
 
     override public function didLoseLevel():Boolean {
-        return board().allActors().ofType("Player").areAnyDisabled();
+        return board().allActors().theFirst().isDisabled();
     }
 
-The only new method here is `areAnyDisabled()`, which returns true if any actors have been disabled.  It's a useful method for end-of-game conditions, like here.  To see all of those methods, check out `bloxley/model/collection/BXGroup.as`.
+This method looks at the first (and only) actor on the board, and returns true if it has been disabled.
 
 Since we want to be able to display when the game is won and lost, also stick the following method into `TiloxPlayController`:
 
@@ -275,7 +275,7 @@ Since we want to be able to display when the game is won and lost, also stick th
             register( image2 );
     }
 
-Make sure that the linkage class for your winning banner is set to `game.BeatLevel`, and the linkage class for your losing banner is set to `game.LostLevel`.  It's already set in the provided graphics, but if you decide to change them, you'll have to make sure that these are set.
+Make sure that the linkage class for your winning banner is set to `game.BeatLevel`, and the linkage class for your losing banner is set to `game.LostLevel`.  It's already set in the provided graphics, but if you decide to change them, you'll have to make sure that this is set.
 
 Once again, run the flash app.  Now when you beat the level, you'll get a nice message saying so--and when you lose the level, you'll get a message saying you lost.
 
@@ -296,10 +296,6 @@ So let's get started.
 
 First, we want the player sprite to look better.  That means not just a single static image; let's put a slight shadow under the sprite.  That'll definitely look good when we have the actor jump.  Open up `tilox/BXTiloxPlayerController.as`, and insert the following methods:
 
-    override public function frameName(actor:BXActor):String {
-        return "Sleeping";
-    }
-    
     override public function initializeSprite(actor:BXActor, sprite:BXSprite) {
         var comp:BXCompositeSprite = sprite as BXCompositeSprite;
         
@@ -308,43 +304,118 @@ First, we want the player sprite to look better.  That means not just a single s
         comp.addSpriteLayer("Shadow", { depth: 1 });
         comp.swapLayers(0, 1);
     }
+
+So, here we're defining `initializeSprite()`.  This method gets called when an actor's sprite is first created.  It allows you to set up the sprite in whatever way you want it.  In our case, we're using it to add another image (a shadow) into the sprite, and then calling `swapLayers()` to place it below the main sprite image (which defaults to depth 0).
+
+Now we want to make the player jump around a bit.  In the same class, insert the following code:
+
+    override public function defaultSpeed():Number {
+        return 5.0;
+    }
     
-    override public function animateSelect(actor:BXActor, oldActor:BXActor, action:BXSelectAction) {
+    override public function animateMove(actor:BXActor, action:BXMoveAction) {
         var sprite = spriteForActor(actor);
         var body = sprite.layer(1);
         
-        var anims = [ body.frame("South", { wait: true }) ];
-        
-        if (oldActor) {
-            var sprite2 = spriteForActor(oldActor);
-            var body2 = sprite2.layer(1);
-        
-            anims.push(body2.frame("Sleeping", { wait: true }));
-        }
-        
-        return anims;
+        return [
+            sprite.goto(action.newPosition, { speed: defaultSpeed() }),
+            body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" })
+        ];
     }
-    
-    override public function animateUndoSelect(actor:BXActor, oldActor:BXActor, action:BXSelectAction) {
+
+Now what are we doing here?  The `defaultSpeed()` method is just a convenient way to change the animation speed.  Fine.  But what is this `animateMove()` method?
+
+Well, to explain, let's talk about actions and animations for a second.  As we said in the first tutorial, every game state change should be performed by an action.  For moving actors around, that action, as we've seen, is BXMoveAction.  However, every action also needs to provide an animation--that way the animations for each action can be properly placed in time sequence.
+
+However, we don't want to have to subclass BXMoveAction every time we want to change its animation; that seems excessive.  And it gets even worse when different actors get animated differently.  Instead, we'll notice that while every action need to _provide_ its animation, it doesn't need to _produce_ it.  So, most actions just pass the request off to a controller--actor, patch, or game--since that will be subclassed anyway, and it is the kind of thing that the control layer should do.  So, `BXMoveAction` calls `animateMove()` on the controller of the actor that is moving, and that method generates the animations necessary.
+
+In our case, we're returning an array of two separate animations.  When this action gets animated, both of the animations will occur at the same time.  What are our two animations?
+
+`sprite.goto(action.newPosition, { speed: defaultSpeed() })`: This is the usual default move animation.  It moves the sprite from its current location, to its new location, at a speed of `defaultSpeed()` (in patch lengths per second).
+
+`body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" })`: This is more interesting.
+
+* First of all, it just animates the yellow body of the sprite, and not the entire thing.
+* Secondly, `shift()` moves the sprite, but as an adjustment to its real location.  The sprite remembers where it _really is_, but displays itself at a slightly shifted location.  The adjustment we have to provide in pixels rather than patch lengths because it is a component of the sprite, rather that the entire sprite.  (This is a limitation of Bloxley that will get fixed).
+* Passing in a `seconds` option allows us to say how long the animation should take.
+* And finally, `blend: "bounce"` tells Bloxley that, rather than adjusting the shift from the starting value (0) to the final value, it should start at 0, go up to that final value, and then back down to 0.  So you can kinda picture how this is a jump.
+
+Now if you run Tilox, you'll see how the player jumps around the screen instead of sliding.  Already, a lot more interesting!  Notice how the shadow stays on the ground while the player's body jumps.
+
+![The player in mid air]()
+
+Now, we want to have the player face in the right direction as it moves around.  We could get really complicated with this, but I think just moving the eyes will be pretty effective.  If you look at the frames of the 'Player' movie clip, you'll see that there are frames named "North", "South", "East", and "West".  We'll use the "West" frame to show when the player is moving "West", etc.
+
+Luckily, since we're already defining our own move animation, we can just modify it to change the sprite's frame when we move.  Replace the `animateMove()` method with the one below:
+
+    override public function animateMove(actor:BXActor, action:BXMoveAction) {
         var sprite = spriteForActor(actor);
         var body = sprite.layer(1);
         
-        var anims = [ body.frame("Sleeping") ];
-        
-        if (oldActor) {
-            var sprite2 = spriteForActor(oldActor);
-            var body2 = sprite2.layer(1);
-    
-            anims.push(body2.frame("South"));
-        }
-        
-        return anims;
+        return [
+            sprite.goto(action.newPosition, { speed: defaultSpeed() }),
+            body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }),
+            body.frame(action.direction().toString(), { wait: true })
+        ];
     }
 
-So this is a good chunk of code.  What does it all do?
+As you can see, all we did is add another animation to the array--this one is a call to `frame()`, which animates changing frames.  Normally, instantaneous animations--ones with no `speed` or `seconds` option--are performed as soon as they are created.  Mostly, that's what you want, but occasionally, you want it to be triggered like non-instantaneous animations.  The `wait: true` option we pass in tells Bloxley to hold off on it, it will be started by some other object.  Leaving this out will cause strange graphical glitches which can be tricky to track down.
 
-Well, the first method, `frameName()`, simply tells Bloxley that all players should default to the 'Sleeping' frame--this way, we can have only the currently selected player look different.  That'll allow us to distinguish which player is active.  That's nice.
+So, run Tilox again, and you'll see the player sprite looking where it is going.  Excellent!
 
-Next we're defining `initializeSprite()`.  This method gets called when an actor's sprite is first created.  It allows you to set up the sprite in whatever way you want it.  In our case, we're using it to add another image into the sprite, and then calling `swapLayers()` to place it below the main sprite image (which defaults to depth 0).
+![Look where you're going!]()
 
-After that we're defining `animateSelect()`.  This method gets called to generate the animation for selecting a new player.
+Our final step is having the floor disappear.  Phew!
+
+Rather than having the floor simply disappear, we'll instead have it (a) shrink down to a dot, and (b) fade away to nothingness.  So, to accomplish that, we first need to have the two pieces of the floor (the black background, and the blue tile) be controlled by Bloxley, rather than Flash.  So open up `TiloxPatchController` and put these methods inside:
+
+    override public function frameName(patch:BXPatch):String {
+        return "Pit";
+    }
+    
+    override public function initializeSprite(patch:BXPatch, sprite:BXSprite) {
+        if (patch.isA("Floor")) {
+            var comp:BXCompositeSprite = sprite as BXCompositeSprite;
+            
+            var floor = comp.addSpriteLayer("WeakFloor", { depth: 1, centered: true });
+            floor.goto([ 16.0, 16.0 ]);
+        }
+    }
+
+The first method, `frameName()`, tells Bloxley to always use the "Pit" frame.  That gets the "Floor" frame's floor tile out of the way.  Next, `initializeSprite()` is used identically to `initializeSprite()` in `TiloxPlayerController`--to set up what the sprite will look like.  In this case, we're adding a "WeakFloor" image to the center of the patch sprite.  `centered: true` tells Bloxley that its registration point is in the center of the image; this will make it easier to resize it.
+
+Now if you run Tilox, it will look the same as before, but the floor tiles will no longer disappear when you walk over them.  This is because they're all already on the "Pit" frame, so the default animation doesn't do anything.  We'll have to change that.  Add the following method to `TiloxPatchController`:
+
+    override public function animatePatchChange(patch:BXPatch, action:BXPatchChangeAction) {
+        var layer = (spriteForPatch(patch) as BXCompositeSprite).layer(1);
+        
+        return [
+            layer.hide({ seconds: 0.5, blend: "snap" }),
+            layer.resize([0.0, 0.0], { seconds: 0.5, blend: "accel" })
+        ];
+    }
+
+Having defined `animateMove()` for the player controller, we're in a much better position to understand what we're doing here.  Following the code, we're taking the layer at depth 1 (which we created in `initializeSprite()` to be the floor tile), and simultaneously (a) hiding it, and (b) resizing it to nothing.  We're using two new blends here--"snap" starts changing quickly and slows down, and "accel" starts slowly and speeds up.
+
+Run Tilox one more time, and you'll see it working!  Excellent, it looks much nicer than before.
+
+![Floor falling away]()
+
+However, you'll soon find one more problem: undo.  Yes, when you undo a step, the floor tile won't reappear.  That's because we're still using the default undo animation.  We need to fix that.  Insert the following code into `TiloxPatchController`:
+
+    override public function animateUndoPatchChange(patch:BXPatch, action:BXPatchChangeAction) {
+        var layer = (spriteForPatch(patch) as BXCompositeSprite).layer(1);
+        
+        return [
+            layer.show(),
+            layer.resize([28.0, 28.0])
+        ];
+    }
+
+It's pretty clear that this is a reverse of what we're doing in `animatePatchChange()`, but you'll notice that we're no longer specifying a `seconds` option.  Like we discussed above, when we don't specify `speed`, `seconds`, or `wait`, the animation takes place instantly--and that's fine for undo animations.
+
+So, run Tilox one last time, and you should see everything working together.  If you want, you can make any of the animations even more complicated and interesting--hopefully this tutorial showed you how it's done!
+
+### Next Time: Threesome
+
+In our next tutorial, we'll develop a game called Threesome.  Rather than focusing on implementing the gameplay, we'll talk about how to write a level editor, as well as implement saving and loading from a server.
