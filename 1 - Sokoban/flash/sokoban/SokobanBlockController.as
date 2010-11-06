@@ -16,7 +16,7 @@ package sokoban {
             return "Block";
         }
         
-        public function canBeSteppedOnByWorker(action, block:BXActor, player:BXActor) {
+        public function canBeSteppedOnByWorker(action:BXMoveAction, block:BXActor, player:BXActor) {
     		action.causes(new BXMoveAction(block, action.direction()));
     	}
 
