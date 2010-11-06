@@ -20,6 +20,12 @@ package tilox {
         override public function canBePlayer(actor:BXActor):Boolean {
             return true;
         }
+
+        /****************************************
+        *                                       *
+        * Making the actor's sprite look better *
+        *                                       *
+        ****************************************/
         
         override public function frameName(actor:BXActor):String {
             return "Sleeping";
@@ -32,26 +38,6 @@ package tilox {
             
             comp.addSpriteLayer("Shadow", { depth: 1 });
             comp.swapLayers(0, 1);
-        }
-        
-        override public function defaultSpeed():Number {
-            return 5.0;
-        }
-        
-        override public function animateMove(actor:BXActor, action:BXMoveAction) {
-            var sprite = spriteForActor(actor);
-            var body = sprite.layer(1);
-            
-            var anims = [
-                sprite.goto(action.newPosition, { speed: defaultSpeed() }),
-                body.frame(action.direction().toString(), { wait: true })
-            ];
-            
-            if (action.oldPosition.isntA("Ice")) {
-                anims.push( body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }) );
-            }
-
-            return anims;
         }
         
         override public function animateSelect(actor:BXActor, oldActor:BXActor, action:BXSelectAction) {
@@ -86,6 +72,28 @@ package tilox {
             return anims;
         }
         
+        /*
+        override public function defaultSpeed():Number {
+            return 5.0;
+        }
+        
+        override public function animateMove(actor:BXActor, action:BXMoveAction) {
+            var sprite = spriteForActor(actor);
+            var body = sprite.layer(1);
+            
+            var anims = [
+                sprite.goto(action.newPosition, { speed: defaultSpeed() }),
+                body.frame(action.direction().toString(), { wait: true })
+            ];
+            
+            if (action.oldPosition.isntA("Ice")) {
+                anims.push( body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }) );
+            }
+
+            return anims;
+        }
+        
+        */
     }
 
 }

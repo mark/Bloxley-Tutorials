@@ -51,27 +51,5 @@ package tilox {
             return board().allActors().ofType("Player").areAnyDisabled();
         }
 
-        /*************
-        *            *
-        * Animations *
-        *            *
-        *************/
-        
-        override public function animateBeatLevel(action:BXAction) {
-    	    return showBank("Beat Level", { seconds: 0.5 });
-        }
-
-        override public function animateUndoBeatLevel(action:BXAction) {
-    	    return hideBank("Beat Level");
-        }
-
-        override public function animateLostLevel(action:BXAction) {
-    	    return showBank("Lost Level", { seconds: 0.5 });
-        }
-
-        override public function animateUndoLostLevel(action:BXAction) {
-    	    return hideBank("Lost Level");
-        }
-
     }
 }
