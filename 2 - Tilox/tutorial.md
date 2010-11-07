@@ -25,7 +25,7 @@ Let's break this tutorial up into three parts:
 
 ### Step 1: Setting up the game structure
 
-We'll start by creating a folder for this project, and inside create another folders called `tilox`.  Inside the `flash` folder, create a new flash file called `Tilox.fla`.  You can download the graphics we'll use here: [Tilox Graphics]().  In the final result above, I set the flash dimensions to 256px x 256px, and the frame rate up to 30fps, but neither are strictly necessary.
+We'll start by creating a folder for this project, and inside create another folders called `tilox`.  Inside the `flash` folder, create a new flash file called `Tilox.fla`.  You can download the graphics we'll use here: [Tilox Graphics](https://s3.amazonaws.com/bloxley_tutorials/2/Tilox Graphics.fla).  In the final result above, I set the flash dimensions to 256px x 256px, and the frame rate up to 30fps, but neither are strictly necessary.
 
 Make sure the Classpath for this project contains `$LOCALDATA` and the directory that contains Bloxley.
 
