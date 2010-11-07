@@ -9,8 +9,8 @@ In Tilox, you have player characters that can either (a) move from one square to
 You can see our implementation below.  The arrow keys will move the character, and holding down Shift while hitting the arrow keys will cause the character to jump.  Like with Sokoban, Backspace will undo and Shift+Backspace will reset the level.
 
 <object width="256" height="256">
-  <param name="movie" value="flash/tilox.swf"></param>
-  <embed src="flash/tilox.swf"
+  <param name="movie" value="https://s3.amazonaws.com/bloxley_tutorials/2/tilox.swf"></param>
+  <embed src="https://s3.amazonaws.com/bloxley_tutorials/2/tilox.swf"
   type="application/x-shockwave-flash" allowfullscreen="false"
   width="256" height="256"></embed>
 </object>
@@ -140,7 +140,7 @@ To go along with this, place the following code into the Frame Actions in `tilox
 
 And that should be enough to get us started.  If you run the flash file, you should get something that looks like this:
 
-![First pass at Tilox]()
+![First pass at Tilox](https://s3.amazonaws.com/bloxley_tutorials/2/TiloxFirstAttempt.jpg)
 
 If it doesn't, then run through the steps again, making sure you didn't miss anything.  Setting the classpath for both the actionscript code, and the `bloxley` library, is especially important, and easy to forget.
 
@@ -182,7 +182,7 @@ Next we want to handle jumping.  When you hit one of the arrow keys, the player 
 
 In any Bloxley game, we have the **User** who is playing the game, and the **Controller** which handles the game logic.  However, the user communicates with the game through button presses and mouse movements--and the controller communicates through moving the actors, and changing the patches.  So there needs to be some intermediary that can speak to both users and controllers.
 
-![Pen Diagram]()
+![Pen Diagram](https://s3.amazonaws.com/bloxley_tutorials/2/PenDiagram.jpg)
 
 Bloxley calls this intermediary a _Pen_.  Pens take in user interactions like key presses, and tell the controller what that key press means.  All pens are a subclass of `BXPen`, although there's a special subclass called `BXPlayPen` designed for pens used in gameplay.  The only behavior that `BXPen` directly implements is Delete for undo, and Shift+Delete for resetting the level.  `BXPlayPen`, however, also includes using the arrow keys to move the currently selected actor, Space to change the currently selected actor, and some mouse control as well.
 
@@ -275,11 +275,13 @@ Since we want to be able to display when the game is won and lost, also stick th
 
 Make sure that the linkage class for your winning banner is set to `game.BeatLevel`, and the linkage class for your losing banner is set to `game.LostLevel`.  It's already set in the provided graphics, but if you decide to change them, you'll have to make sure that you do this.
 
-Once again, run Tilox.  Now when you beat the level, you'll get a nice message saying so--and when you lose the level, you'll get a message saying you lost.
+Once again, run Tilox.  Now when you beat the level, you'll get a nice message saying so:
 
-![Beat the Level]()
+![Beat the Level](https://s3.amazonaws.com/bloxley_tutorials/2/BeatLevel.jpg)
 
-![Lost the Level]()
+And when you lose the level, you'll get a message saying you lost:
+
+![Lost the Level](https://s3.amazonaws.com/bloxley_tutorials/2/LostLevel.jpg)
 
 ### Step 3: Improving the Graphics
 
@@ -303,9 +305,9 @@ First, we want the player sprite to look better.  That means not just having a s
         comp.swapLayers(0, 1);
     }
 
-So, here we're defining `initializeSprite()`.  This method gets called when an actor's sprite is first created.  It allows you to set up the sprite in whatever way you want it.  In our case, we're using it to add another image (a shadow) into the sprite, and then calling `swapLayers()` to place it below the main sprite image (which defaults to depth 0).  Run Tilox and take a look:
+So, here we're defining `initializeSprite()`.  This method gets called when an actor's sprite is first created.  It allows you to set up the sprite in whatever way you want it.  In our case, we're using it to add another image (a shadow) into the sprite, and then calling `swapLayers()` to place it below the main sprite image (which defaults to depth 0).  Run Tilox and take a look; it's subtle but you can see it when you compare this screenshot with the last:
 
-![Player with shadow]()
+![Player with shadow](https://s3.amazonaws.com/bloxley_tutorials/2/PlayerWithShadow.jpg)
 
 Now we want to make the player jump around a bit.  In the same class, insert the following methods:
 
@@ -340,9 +342,9 @@ In our case, we're returning an array of two separate animations.  When this act
 * Passing in a `seconds` option allows us to say how long the animation should take.
 * And finally, `blend: "bounce"` tells Bloxley that, rather than adjusting the shift from the starting value (0) to the final value (-8 or -16), it should start at 0, go up to that final value, and then back down to 0.  So you can kinda picture how this is a jump.
 
-Now if you run Tilox, you'll see how the player jumps around the screen instead of sliding.  Already, a lot more interesting!  Notice how the shadow stays on the ground while the player's body jumps.
+Now if you run Tilox, you'll see how the player jumps around the screen instead of sliding.  Already, a lot more interesting!  Notice how the shadow stays on the ground while the player's body jumps:
 
-![The player in mid air]()
+![Player jumping](https://s3.amazonaws.com/bloxley_tutorials/2/PlayerJumping.jpg)
 
 Now, we want to have the player face the direction it moves in.  We could get really complicated with this, but I think just moving the eyes will be pretty effective.  If you look at the frames of the 'Player' movie clip, you'll see that there are frames named "North", "South", "East", and "West".  We'll use the "West" frame to show when the player is moving "West", etc.
 
@@ -354,7 +356,7 @@ As you can see, we added another animation to the array; this one is a call to `
 
 So, run Tilox again, and you'll see the player sprite looking where it is going.  Excellent!
 
-![Look where you're going!]()
+![Look where you're going!](https://s3.amazonaws.com/bloxley_tutorials/2/PlayerLooking.jpg)
 
 Our final step is having the floor disappear.  Phew!
 
@@ -390,7 +392,7 @@ Having defined `animateMove()` for the player controller, we're in a much better
 
 Run Tilox one more time, and you'll see it working!  Excellent, it looks much nicer than before.
 
-![Floor falling away]()
+![Floor falling away](https://s3.amazonaws.com/bloxley_tutorials/2/PatchFalling.jpg)
 
 However, you'll soon find one more problem: undo.  Yes, when you undo a step, the floor tile won't reappear.  That's because we're still using the default undo animation.  We need to replace that.  Insert the following method into `TiloxPatchController`:
 
