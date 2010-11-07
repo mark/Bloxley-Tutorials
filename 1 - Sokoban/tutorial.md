@@ -389,4 +389,4 @@ Congrats!  You have now programmed a complete game!  It has animation, unlimited
 
 ## What's Next?
 
-While our implementation of Sokoban is playable, it's pretty bare-bones.  The player is a single, static image.  There's no timer, or move counter.  It's hard to tell which worker is selected, and it's hard to tell when a block is on the target square.  In our next tutorial, we'll add all of that. We'll also add a new patch type--Ice--so that we can have sliding block puzzles as well.  I hope you can't wait!
+While our implementation of Sokoban is playable, it's pretty bare-bones.  The player is a single, static image.  In our next tutorial, we'll tackle a different game, called Tilox--and we'll talk about how to polish the graphics so it looks more professional.  We'll also talk about some other parts of the Bloxley framework.
