@@ -12,6 +12,10 @@ package sokoban {
             controllers({ Patch: SokobanPatchController, Worker: SokobanWorkerController, Play: SokobanPlayController,
                           Block: SokobanBlockController });
         }
+        
+        override public function defaultGridSize():Number {
+            return 20.0;
+        }
 
     }
  

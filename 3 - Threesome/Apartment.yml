@@ -1,0 +1,59 @@
+---
+level:
+game.loadLevel([
+    "##########",
+    "#...#..G.#",
+    "#.g....g.#",
+    "#...##.e.#",
+    "#.c.##@.@#",
+    "#........#",
+    "#.r.###.##",
+    "#...#ro..#",
+    "#.o.....e#",
+    "#...##..e#",
+    "#........#",
+    "#....#!!!#",
+    "##########"
+],
+{
+    gate:[
+        { x: 4, y:  2, left: "Green",  right: "Green", orientation: 90 },
+        { x: 4, y:  5, left: "Orange", right: "Red",   orientation: 90 },
+        { x: 5, y:  5, left: "Cyan",   right: "Green", orientation: 90 },
+        { x: 7, y:  6, left: "Green",  right: "Green", orientation:  0 },
+        { x: 4, y:  8, left: "Orange", right: "Red",   orientation: 90 },
+        { x: 5, y: 10, left: "Grey",   right: "Grey",  orientation: 90 }
+    ]
+});
+    gate:
+        - x: 4
+          y: 2
+          left: Green
+          right: Green
+          orientation: 90
+        - x: 4
+          y: 5
+          left: Orange
+          right: Red
+          orientation: 90
+        - x: 5
+          y: 5
+          left: Cyan
+          right: Green
+          orientation: 90
+        - x: 7
+          y: 6
+          left: Green
+          right: Green
+          orientation: 0
+        - x: 4
+          y: 8
+          left: Orange
+          right: Red
+          orientation: 90
+        - x: 5
+          y: 10
+          left: Grey
+          right: Grey
+          orientation: 90
+    

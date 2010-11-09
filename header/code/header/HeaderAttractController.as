@@ -10,21 +10,19 @@ package header {
         
         public function HeaderAttractController(name: String, game:BXGame) {
             super(name, game);
+            
+            this.queue = null;
         }
 
-        override public function createInterface() {
-            // Nothing
-        }
-        
         override public function createPhases() {
-            phase("Move Block", { call: "moveBlock" }).pass("Wait", "waitForEvent").fail("Move Block", "immediate");
+            phase("Move Block", { call: "moveBlock" }).pass("Wait").fail("Move Block", "immediate");
             phase("Wait").after("Move Block", "delay", 0.5);
             
             setInitialPhase("Wait");
         }
 
         override public function onStart() {
-            loop().mainLoop();
+            loop().run();
         }
         
         public function randomDirection():BXDirection {

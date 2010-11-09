@@ -3,6 +3,7 @@ package header {
     import flash.display.Stage;
     
     import bloxley.controller.game.*;
+    import bloxley.view.gui.BXGrid;
     
     public class HeaderGame extends BXGame {
 
@@ -14,6 +15,8 @@ package header {
             { Patch: 0xfff2ab, Block: [ 0x1f0055, 0x290217, 0x505210, 0xffd46b ] },
             { Patch: 0xedb393, Block: [ 0x939eb7, 0x313b54, 0x805060, 0xee796f ] },
             { Patch: 0xbbb3df, Block: [ 0x572778, 0x75585b, 0x8d7e5c, 0xa59990 ] },
+            { Patch: 0xa6e2ff, Block: [ 0x376b87, 0xb8b8b8, 0x637f66, 0x6b3d52 ] },
+            { Patch: 0xffcfad, Block: [ 0xa6a38c, 0x5f8575, 0x783c1f, 0x132229 ] }
         ]
         
         static var CurrentColorScheme:Object;

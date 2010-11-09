@@ -31,7 +31,7 @@ package tilox {
     	        var comp:BXCompositeSprite = sprite as BXCompositeSprite;
     	        
     	        var floor = comp.addSpriteLayer("WeakFloor", { depth: 1, centered: true });
-    	        floor.goto([ 16.0, 16.0 ]);
+    	            floor.goto([ 0.0, 0.0 ]);
     	    }
     	}
 
@@ -49,7 +49,7 @@ package tilox {
             
             return [
                 layer.show(),
-                layer.resize([28.0, 28.0])
+                layer.resize([0.875, 0.875])
             ];
         }
     	
