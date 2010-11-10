@@ -34,18 +34,6 @@ package threesome {
             action.fail();
         }
         
-        // public function canEnterTrigger(action:BXMoveAction, source:BXActor, target:BXPatch) {
-        //     action.causes( new ThreesomeTriggerAction(game.currentGameController() as ThreesomePlayController,
-        //                                               target.get("color"),
-        //                                               true) );
-        // }
-        // 
-        // public function canExitTrigger(action:BXMoveAction, source:BXActor, target:BXPatch) {
-        //     action.causes( new ThreesomeTriggerAction(game.currentGameController() as ThreesomePlayController,
-        //                                               target.get("color"),
-        //                                               false) );
-        // }
-
     }
 
 }

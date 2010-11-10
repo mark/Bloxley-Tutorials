@@ -10,7 +10,7 @@ package threesome {
             super(stage);
             
             controllers({ Patch: ThreesomePatchController, Player: ThreesomePlayerController,
-                          Play: ThreesomePlayController, Gate: ThreesomeGateController });
+                          Play:  ThreesomePlayController,  Gate:   ThreesomeGateController });
         }
     }
 

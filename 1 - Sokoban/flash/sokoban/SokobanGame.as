@@ -2,7 +2,7 @@ package sokoban {
     
     import flash.display.Stage;
     
-    import bloxley.controller.game.*;
+    import bloxley.controller.game.BXGame;
     
     public class SokobanGame extends BXGame {
         
