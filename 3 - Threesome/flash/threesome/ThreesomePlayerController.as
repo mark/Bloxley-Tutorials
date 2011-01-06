@@ -8,8 +8,8 @@ package threesome {
     
     public class ThreesomePlayerController extends BXActorController {
         
-        public function ThreesomePlayerController(name, game) {
-            super(name, game);
+        public function ThreesomePlayerController(game) {
+            super("Player", game);
             
             setBoardString("@" + BXColor.upperCases());
         }
@@ -19,10 +19,6 @@ package threesome {
         * Game Methods *
         *              *
         ***************/
-        
-        override public function key(options = null):String {
-            return "Player";
-        }
         
         override public function canBePlayer(actor:BXActor):Boolean {
             return true;
@@ -75,7 +71,7 @@ package threesome {
             
             return [
                 sprite.goto(action.newPosition, { speed: defaultSpeed() }),
-                body.shift([0, -8.0 * action.steps()], { seconds: action.steps() / defaultSpeed(), blend: "bounce" }),
+                body.shift([0, -8.0 * action.steps()], { seconds: 1.0 / defaultSpeed(), blend: "bounce" }),
                 body.frame(action.direction().toString(), { wait: true })
             ];
         }

@@ -9,8 +9,8 @@ package threesome {
     
     public class ThreesomeGateController extends BXActorController {
         
-        public function ThreesomeGateController(name, game) {
-            super(name, game);
+        public function ThreesomeGateController(game) {
+            super("Game", game);
             
             attributes({ left: "Color", right: "Color", orientation: "Number" });
         }
@@ -43,29 +43,37 @@ package threesome {
         *                   *
         ********************/
         
-    	override public function registrationAtCenter(actor:BXActor):Boolean { return true; }
+        override public function graphicsName(actor:BXActor):String { return null; }
 
+    	override public function registrationAtCenter(actor:BXActor):Boolean {
+    	    return true;
+    	}
+    	
+        override public function dimensions(actor:BXActor):Array { return [ 0.5, 1.0 ]; }
+        
         override public function initializeSprite(actor:BXActor, sprite:BXSprite) {
             var c:BXCompositeSprite = sprite as BXCompositeSprite;
             c.rotate( actor.get("orientation") );
             
-            var left = c.addSpriteLayer("LeftGate",  { depth: 1 });
+            var left = c.addSpriteLayer("LeftDoor",  { depth: 0 });
             left.color( actor.get("left") );
+            left.goto( [-0.5, 0.0] );
             
-            var right = c.addSpriteLayer("RightGate", { depth: 2 });
+            var right = c.addSpriteLayer("RightDoor", { depth: 1 });
             right.color( actor.get("right") );
+            left.goto( [0.5, 0.0] );
         }
         
         public function animateGateChange(gate:BXActor, action:ThreesomeGateChangeAction) {
             var sprite = spriteForActor(gate);
-            return [ sprite.layer(1).resize( [gate.get("leftOpen" ) ? 0.0 : 0.5, 1.0], { seconds: 0.5 } ),
-                     sprite.layer(2).resize( [gate.get("rightOpen") ? 0.0 : 0.5, 1.0], { seconds: 0.5 } ) ];
+            return [ sprite.layer(0).resize( [gate.get("leftOpen" ) ? 0.0 : 0.5, 1.0], { seconds: 0.5 } ),
+                     sprite.layer(1).resize( [gate.get("rightOpen") ? 0.0 : 0.5, 1.0], { seconds: 0.5 } ) ];
         }
 
         public function animateUndoGateChange(gate:BXActor, action:ThreesomeGateChangeAction) {
             var sprite = spriteForActor(gate);
-            return [ sprite.layer(1).resize( [gate.get("leftOpen" ) ? 0.0 : 0.5, 1.0]),
-                     sprite.layer(2).resize( [gate.get("rightOpen") ? 0.0 : 0.5, 1.0]) ];
+            return [ sprite.layer(0).resize( [gate.get("leftOpen" ) ? 0.0 : 0.5, 1.0]),
+                     sprite.layer(1).resize( [gate.get("rightOpen") ? 0.0 : 0.5, 1.0]) ];
         }
 
     }

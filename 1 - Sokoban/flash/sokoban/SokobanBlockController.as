@@ -6,8 +6,8 @@ package sokoban {
     
     public class SokobanBlockController extends BXActorController {
 
-        public function SokobanBlockController(name, game) {
-            super(name, game);
+        public function SokobanBlockController(game) {
+            super("Block", game);
             
             setBoardString("$*");
         }

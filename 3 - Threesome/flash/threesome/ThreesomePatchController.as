@@ -8,8 +8,8 @@ package threesome {
     
     public class ThreesomePatchController extends BXPatchController {
         
-        public function ThreesomePatchController(name:String, game:BXGame) {
-            super(name, game);
+        public function ThreesomePatchController(game:BXGame) {
+            super(game);
             
             tiles({ Floor: ".@", Wall: "#", Trigger: BXColor.bothCases(), Goal: "!" });
         }

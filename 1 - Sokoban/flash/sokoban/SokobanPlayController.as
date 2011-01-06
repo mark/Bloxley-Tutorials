@@ -6,8 +6,8 @@ package sokoban {
     
     public class SokobanPlayController extends BXPlayController {
         
-        public function SokobanPlayController(name: String, game:BXGame) {
-            super(name, game);
+        public function SokobanPlayController(game:BXGame) {
+            super(game);
         }
         
         override public function createInterface() {

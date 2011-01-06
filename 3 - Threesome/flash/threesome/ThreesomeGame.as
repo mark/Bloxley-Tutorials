@@ -8,9 +8,10 @@ package threesome {
         
         public function ThreesomeGame(stage:Stage) {
             super(stage);
-            
-            controllers({ Patch: ThreesomePatchController, Player: ThreesomePlayerController,
-                          Play:  ThreesomePlayController,  Gate:   ThreesomeGateController });
+
+            controllers( ThreesomePatchController,
+                         ThreesomePlayerController, ThreesomeGateController,
+                         ThreesomePlayController,   ThreesomeEditorController );
         }
     }
 

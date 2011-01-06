@@ -5,8 +5,8 @@ package sokoban {
     
     public class SokobanWorkerController extends BXActorController {
 
-        public function SokobanWorkerController(name, game) {
-            super(name, game);
+        public function SokobanWorkerController(game) {
+            super("Worker", game);
             
             setBoardString("@+");
         }

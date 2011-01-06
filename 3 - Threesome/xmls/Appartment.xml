@@ -1,0 +1,53 @@
+<level>
+  <board>
+    <row>##########</row>
+    <row>#...#..G.#</row>
+    <row>#.g....g.#</row>
+    <row>#...##.e.#</row>
+    <row>#.c.##@.@#</row>
+    <row>#........#</row>
+    <row>#.r.###.##</row>
+    <row>#...#ro..#</row>
+    <row>#.o.....e#</row>
+    <row>#...##..e#</row>
+    <row>#..@.....#</row>
+    <row>#....#!!!#</row>
+    <row>##########</row>
+  </board>
+  
+  <gate x="4" y="2">
+    <left>Green</left>
+    <right>Green</right>
+    <orientation>90</orientation>
+  </gate>
+
+  <gate x="4" y="5">
+    <left>Orange</left>
+    <right>Red</right>
+    <orientation>90</orientation>
+  </gate>
+
+  <gate x="5" y="5">
+    <left>Cyan</left>
+    <right>Green</right>
+    <orientation>90</orientation>
+  </gate>
+
+  <gate x="7" y="6">
+    <left>Green</left>
+    <right>Green</right>
+    <orientation>0</orientation>
+  </gate>
+
+  <gate x="4" y="8">
+    <left>Orange</left>
+    <right>Red</right>
+    <orientation>90</orientation>
+  </gate>
+
+  <gate x="5" y="10">
+    <left>Grey</left>
+    <right>Grey</right>
+    <orientation>90</orientation>
+  </gate>
+</level>

@@ -9,8 +9,8 @@ package sokoban {
         public function SokobanGame(stage:Stage) {
             super(stage);
             
-            controllers({ Patch: SokobanPatchController, Worker: SokobanWorkerController, Play: SokobanPlayController,
-                          Block: SokobanBlockController });
+            controllers( SokobanPatchController, SokobanWorkerController,
+						 SokobanPlayController,  SokobanBlockController );
         }
         
         override public function defaultGridSize():Number {

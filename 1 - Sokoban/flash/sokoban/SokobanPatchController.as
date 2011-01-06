@@ -5,8 +5,8 @@ package sokoban {
     
     public class SokobanPatchController extends BXPatchController {
         
-        public function SokobanPatchController(name:String, game:BXGame) {
-            super(name, game);
+        public function SokobanPatchController(game:BXGame) {
+            super(game);
             
             tiles({ Floor: " @$", Wall: "#", Target: ".+*" });
         }

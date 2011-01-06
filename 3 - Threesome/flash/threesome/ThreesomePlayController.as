@@ -6,12 +6,14 @@ package threesome {
     import bloxley.controller.game.*;
     import bloxley.controller.pen.*;
     import bloxley.controller.event.*;
-    import bloxley.view.gui.BXImage;
+    import bloxley.view.gui.*;
+    
+    import bloxley.util.BXInterfaceHelper;
     
     public class ThreesomePlayController extends BXPlayController {
         
-        public function ThreesomePlayController(name: String, game:BXGame) {
-            super(name, game);
+        public function ThreesomePlayController(game:BXGame) {
+            super(game);
         }
 
         override public function createInterface() {
@@ -24,7 +26,7 @@ package threesome {
                 image.goto([ screen[0] * 0.5, screen[1] * 0.5 ]);
                 register( image );
         }
-
+        
         /*************
         *            *
         * Game Logic *
@@ -32,8 +34,8 @@ package threesome {
         *************/
         
         override public function startGame() {
-            heartbeat();
             super.startGame();
+            heartbeat();
         }
         
         override public function didBeatLevel():Boolean {
